@@ -1,38 +1,22 @@
 #!/bin/bash
 
-################################################################################
-#      This file is part of OpenELEC - http://www.openelec.tv
-#      Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
-#
-#  OpenELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  OpenELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
+# Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
-. config/options $1
+. config/options "$1"
 
 if [ -z "$1" ]; then
-  echo "usage: $0 package_name"
-  exit 1
+  die "usage: $0 package_name"
 fi
 
-if [ ! -f $PKG_DIR/package.mk ]; then
-  printf "$(print_color CLR_ERROR "$1: no package.mk file found")\n"
-  exit 1
+if [ -z "${PKG_NAME}" ]; then
+  die "$(print_color CLR_ERROR "${1}: no package.mk file found")"
 fi
 
 $SCRIPTS/get $1
 
-STAMP=$PKG_BUILD/.libreelec-unpack
+STAMP="$PKG_BUILD/.libreelec-unpack"
 
 mkdir -p $BUILD
 
@@ -45,6 +29,7 @@ for i in $BUILD/$1-*; do
       [ -z "${PKG_DEEPHASH}" ] && PKG_DEEPHASH=$(calculate_stamp)
       if [ ! "$PKG_DEEPHASH" = "$STAMP_PKG_DEEPHASH" ] ; then
         $SCRIPTS/clean $1
+        [ "$1" = "linux" -a "$KERNEL_EXTRA_DEPENDS_TARGET" = "device-trees-amlogic" ] && $SCRIPTS/clean device-trees-amlogic
       fi
     fi
   fi
@@ -58,55 +43,37 @@ fi
 [ -f "$STAMP" ] && exit 0
 
 if [ -d "$SOURCES/$1" -o -d "$PKG_DIR/sources" ]; then
-  printf "%${BUILD_INDENT}c $(print_color CLR_UNPACK "UNPACK")   $1\n" ' '>&$SILENT_OUT
-  export BUILD_INDENT=$((${BUILD_INDENT:-1}+$BUILD_INDENT_SIZE))
+  build_msg "CLR_UNPACK" "UNPACK" "${1}" "indent"
 
-  # unset functions
-  unset -f pre_unpack
-  unset -f unpack
-  unset -f post_unpack
-  unset -f pre_patch
-  unset -f post_patch
+  pkg_call_optional pre_unpack
 
-  . $PKG_DIR/package.mk
-
-  if [ "$(type -t pre_unpack)" = "function" ]; then
-    pre_unpack
-  fi
-
-  if [ "$(type -t unpack)" = "function" ]; then
-    unpack
-  else
+  if ! pkg_call unpack; then
     if [ -n "$PKG_URL" ]; then
       $SCRIPTS/extract $1 $BUILD
     fi
   fi
 
-  if [ ! -d $BUILD/$PKG_NAME-$PKG_VERSION ]; then
+  if [ ! -d "$PKG_BUILD" ]; then
     if [ -n "$PKG_SOURCE_DIR" ]; then
-      mv $BUILD/$PKG_SOURCE_DIR $BUILD/$PKG_NAME-$PKG_VERSION
-    elif [ -d $BUILD/$PKG_NAME-$PKG_VERSION* ]; then
-      mv $BUILD/$PKG_NAME-$PKG_VERSION* $BUILD/$PKG_NAME-$PKG_VERSION
+      mv $BUILD/$PKG_SOURCE_DIR "$PKG_BUILD"
+    elif [ -d "$PKG_BUILD"* ]; then
+      mv "$PKG_BUILD"* "$PKG_BUILD"
     fi
   fi
 
   if [ -d "$PKG_DIR/sources" ]; then
-    [ ! -d "$BUILD/${PKG_NAME}-${PKG_VERSION}" ] && mkdir -p $BUILD/${PKG_NAME}-${PKG_VERSION}
-    cp -PRf $PKG_DIR/sources/* $BUILD/${PKG_NAME}-${PKG_VERSION}
+    [ ! -d "$PKG_BUILD" ] && mkdir -p "$PKG_BUILD"
+    cp -PRf "$PKG_DIR/sources/"* "$PKG_BUILD"
   fi
 
   if [ -z "$PKG_URL" ]; then
-    mkdir -p "${BUILD}/${PKG_NAME}-${PKG_VERSION}"
+    mkdir -p "${PKG_BUILD}"
   fi
 
-  if [ "$(type -t post_unpack)" = "function" ]; then
-    post_unpack
-  fi
+  pkg_call_optional post_unpack
 
   if [ "${PKG_SKIP_PATCHES}" != "yes" ]; then
-    if [ "$(type -t pre_patch)" = "function" ]; then
-      pre_patch
-    fi
+    pkg_call_optional pre_patch
 
     if [ "$TARGET_ARCH" = "x86_64" ]; then
       PATCH_ARCH="x86"
@@ -166,23 +133,21 @@ if [ -d "$SOURCES/$1" -o -d "$PKG_DIR/sources" ]; then
       fi
 
       if [ -f "$i" ]; then
-        printf "%${BUILD_INDENT}c $(print_color CLR_APPLY_PATCH "APPLY PATCH") $(print_color CLR_PATCH_DESC "${PATCH_DESC}")   ${i#$ROOT/}\n" ' '>&$SILENT_OUT
+        build_msg "CLR_APPLY_PATCH" "APPLY PATCH $(print_color "CLR_PATCH_DESC" "${PATCH_DESC}")" "${i#${ROOT}/}"
         if grep -qE '^GIT binary patch$|^rename from|^rename to' $i; then
-          cat $i | git apply --directory=`echo "$PKG_BUILD" | cut -f1 -d\ ` -p1 --verbose --whitespace=nowarn --unsafe-paths >&$VERBOSE_OUT
+          cat $i | git apply --directory=$(echo "$PKG_BUILD" | cut -f1 -d\ ) -p1 --verbose --whitespace=nowarn --unsafe-paths >&$VERBOSE_OUT
         else
-          cat $i | patch -d `echo "$PKG_BUILD" | cut -f1 -d\ ` -p1 >&$VERBOSE_OUT
+          cat $i | patch -d $(echo "$PKG_BUILD" | cut -f1 -d\ ) -p1 >&$VERBOSE_OUT
         fi
       fi
     done
 
-    if [ "$(type -t post_patch)" = "function" ]; then
-      post_patch
-    fi
+    pkg_call_optional post_patch
   fi
 
   if [ ! "$PKG_NAME" = "configtools" ] ; then
-    for config in `find $PKG_BUILD -name config.guess | sed 's/config.guess//'`; do
-      printf "%${BUILD_INDENT}c $(print_color CLR_FIXCONFIG "FIXCONFIG")   $config\n" ' '
+    for config in $(find "$PKG_BUILD" -name config.guess | sed 's/config.guess//'); do
+      build_msg "CLR_FIXCONFIG" "FIXCONFIG" "${config}"
 
       [ -f "$config/config.guess" -a -f $TOOLCHAIN/configtools/config.guess ] && \
         cp -f $TOOLCHAIN/configtools/config.guess $config
@@ -193,7 +158,7 @@ if [ -d "$SOURCES/$1" -o -d "$PKG_DIR/sources" ]; then
 fi
 
 if [ "$PKG_SECTION" != "virtual" ]; then
-  mkdir -p $PKG_BUILD
+  mkdir -p "$PKG_BUILD"
 
   rm -f $STAMPS/$1/build_*
 

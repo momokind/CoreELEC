@@ -1,20 +1,6 @@
-################################################################################
-#      This file is part of OpenELEC - http://www.openelec.tv
-#      Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
-#
-#  OpenELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  OpenELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
+# Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="syslinux"
 PKG_VERSION="6.03"
@@ -25,17 +11,17 @@ PKG_SITE="http://syslinux.zytor.com/"
 PKG_URL="http://www.kernel.org/pub/linux/utils/boot/$PKG_NAME/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_HOST="util-linux:host"
 PKG_DEPENDS_TARGET="toolchain util-linux e2fsprogs syslinux:host"
-PKG_SECTION="tools"
-PKG_SHORTDESC="syslinux: Linux bootloader collection"
-PKG_LONGDESC="The SYSLINUX project covers lightweight linux bootloaders for floppy media (syslinux), network booting (pxelinux) and bootable el-torito cd-roms (isolinux)."
+PKG_LONGDESC="The SYSLINUX project covers lightweight linux bootloaders."
 
-PKG_MAKE_OPTS_TARGET="CC=$CC AR=$AR RANLIB=$RANLIB installer"
+pre_configure_target() {
+  PKG_MAKE_OPTS_TARGET="CC=$CC AR=$AR RANLIB=$RANLIB installer"
 
 # Unset all compiler FLAGS
   unset CFLAGS
   unset CPPFLAGS
   unset CXXFLAGS
   unset LDFLAGS
+}
 
 pre_build_target() {
   mkdir -p $PKG_BUILD/.$TARGET_NAME

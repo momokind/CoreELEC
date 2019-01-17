@@ -1,32 +1,13 @@
-################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2016-present Team LibreELEC
-#
-#  LibreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  LibreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-mupen64plus"
-PKG_VERSION="d2abd0c"
-PKG_SHA256="99aa710207e19d30bdfc5bf3b891bf77e77c27095e75e953af0c89bf28e4f575"
-PKG_ARCH="any"
+PKG_VERSION="a4fbedf5c30db1761812627cbb4923cef8bb92b4"
+PKG_SHA256="b05816c0692f9554c1f331f700e82f625156352110aab79a3d5ec4be0e1a83de"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/mupen64plus-libretro"
 PKG_URL="https://github.com/libretro/mupen64plus-libretro/archive/$PKG_VERSION.tar.gz"
-PKG_SOURCE_DIR="mupen64plus-libretro-$PKG_VERSION*"
 PKG_DEPENDS_TARGET="toolchain kodi-platform"
-PKG_SECTION="emulation"
-PKG_SHORTDESC="game.libretro.mupen64plus: Mupen64Plus for Kodi"
 PKG_LONGDESC="game.libretro.mupen64plus: Mupen64Plus for Kodi"
 
 PKG_LIBNAME="mupen64plus_libretro.so"

@@ -1,32 +1,17 @@
-################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2016-present Team LibreELEC
-#
-#  LibreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  LibreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="tvheadend42"
-PKG_VERSION="5613551"
-PKG_SHA256="eff2d5aa08d7c91595d2ec4d4dda2f1bedc07ee8672d1ffb5ed994e284714f23"
-PKG_VERSION_NUMBER="4.2.6-7"
-PKG_REV="115"
+PKG_VERSION="5c218500579d5bd1c1f7e7a4b5f7f0fb35baa626"
+PKG_SHA256="a9fe5a4c36aa185e3f0a73a709f0dc05794ae9c12f5d888985b559ff68a2508d"
+PKG_VERSION_NUMBER="4.2.7-44"
+PKG_REV="118"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.tvheadend.org"
 PKG_URL="https://github.com/tvheadend/tvheadend/archive/$PKG_VERSION.tar.gz"
-PKG_SOURCE_DIR="tvheadend-${PKG_VERSION}*"
-PKG_DEPENDS_TARGET="toolchain avahi curl dvb-apps ffmpegx libdvbcsa libhdhomerun libiconv openssl pngquant:host Python2:host tvh-dtv-scan-tables"
+PKG_DEPENDS_TARGET="toolchain avahi comskip curl dvb-apps ffmpegx libdvbcsa libhdhomerun \
+                    libiconv openssl pngquant:host Python2:host tvh-dtv-scan-tables"
 PKG_SECTION="service"
 PKG_SHORTDESC="Tvheadend: a TV streaming server for Linux"
 PKG_LONGDESC="Tvheadend ($PKG_VERSION_NUMBER): is a TV streaming server for Linux supporting DVB-S/S2, DVB-C, DVB-T/T2, IPTV, SAT>IP, ATSC and ISDB-T"
@@ -61,37 +46,37 @@ if [[ "$TARGET_ARCH" != "x86_64" ]]; then
     --disable-libx265"
 fi
 
-PKG_CONFIGURE_OPTS_TARGET="--prefix=/usr \
-                           --arch=$TARGET_ARCH \
-                           --cpu=$TARGET_CPU \
-                           --cc=$CC \
-                           $PKG_TVH_TRANSCODING \
-                           --enable-avahi \
-                           --enable-bundle \
-                           --disable-dbus_1 \
-                           --enable-dvbcsa \
-                           --enable-dvben50221 \
-                           --disable-dvbscan \
-                           --enable-hdhomerun_client \
-                           --disable-hdhomerun_static \
-                           --enable-epoll \
-                           --enable-inotify \
-                           --enable-pngquant \
-                           --disable-libmfx_static \
-                           --disable-nvenc \
-                           --disable-uriparser \
-                           --enable-tvhcsa \
-                           --enable-trace \
-                           --nowerror \
-                           --disable-bintray_cache \
-                           --python=$TOOLCHAIN/bin/python"
-
 post_unpack() {
   sed -e 's/VER="0.0.0~unknown"/VER="'$PKG_VERSION_NUMBER' ~ CoreELEC Tvh-addon v'$ADDON_VERSION'.'$PKG_REV'"/g' -i $PKG_BUILD/support/version
   sed -e 's|'/usr/bin/pngquant'|'$TOOLCHAIN/bin/pngquant'|g' -i $PKG_BUILD/support/mkbundle
 }
 
 pre_configure_target() {
+  PKG_CONFIGURE_OPTS_TARGET="--prefix=/usr \
+                             --arch=$TARGET_ARCH \
+                             --cpu=$TARGET_CPU \
+                             --cc=$CC \
+                             $PKG_TVH_TRANSCODING \
+                             --enable-avahi \
+                             --enable-bundle \
+                             --disable-dbus_1 \
+                             --enable-dvbcsa \
+                             --disable-dvben50221 \
+                             --disable-dvbscan \
+                             --enable-hdhomerun_client \
+                             --disable-hdhomerun_static \
+                             --enable-epoll \
+                             --enable-inotify \
+                             --enable-pngquant \
+                             --disable-libmfx_static \
+                             --disable-nvenc \
+                             --disable-uriparser \
+                             --enable-tvhcsa \
+                             --enable-trace \
+                             --nowerror \
+                             --disable-bintray_cache \
+                             --python=$TOOLCHAIN/bin/python"
+
 # fails to build in subdirs
   cd $PKG_BUILD
   rm -rf .$TARGET_NAME
@@ -100,6 +85,9 @@ pre_configure_target() {
   PKG_CONFIG_PATH="$(get_build_dir ffmpegx)/.INSTALL_PKG/usr/local/lib/pkgconfig"
   CFLAGS="$CFLAGS -I$(get_build_dir ffmpegx)/.INSTALL_PKG/usr/local/include"
   LDFLAGS="$LDFLAGS -L$(get_build_dir ffmpegx)/.INSTALL_PKG/usr/local/lib"
+
+# pass gnutls to build
+  LDFLAGS="$LDFLAGS -L$(get_build_dir gnutls)/.INSTALL_PKG/usr/lib"
 
 # pass libhdhomerun to build
   CFLAGS="$CFLAGS -I$(get_build_dir libhdhomerun)"
@@ -121,14 +109,23 @@ addon() {
 
   cp $PKG_DIR/addon.xml $ADDON_BUILD/$PKG_ADDON_ID
 
+  # copy gnutls lib that is needed for ffmpeg
+  mkdir -p $ADDON_BUILD/$PKG_ADDON_ID/lib
+  cp -PL $(get_build_dir gnutls)/.INSTALL_PKG/usr/lib/libgnutls.so.30 $ADDON_BUILD/$PKG_ADDON_ID/lib
+  cp -PL $(get_build_dir nettle)/.install_pkg/usr/lib/libnettle.so.6 $ADDON_BUILD/$PKG_ADDON_ID/lib
+  cp -PL $(get_build_dir nettle)/.install_pkg/usr/lib/libhogweed.so.4 $ADDON_BUILD/$PKG_ADDON_ID/lib
+  cp -PL $(get_build_dir libidn2)/.install_pkg/usr/lib/libidn2.so.4 $ADDON_BUILD/$PKG_ADDON_ID/lib
+  cp -PL $(get_build_dir gmp)/.install_pkg/usr/lib/libgmp.so.10 $ADDON_BUILD/$PKG_ADDON_ID/lib
+
   # set only version (revision will be added by buildsystem)
-  $SED -e "s|@ADDON_VERSION@|$ADDON_VERSION|g" \
-       -i $ADDON_BUILD/$PKG_ADDON_ID/addon.xml
+  sed -e "s|@ADDON_VERSION@|$ADDON_VERSION|g" \
+      -i $ADDON_BUILD/$PKG_ADDON_ID/addon.xml
 
   cp -P $PKG_BUILD/build.linux/tvheadend $ADDON_BUILD/$PKG_ADDON_ID/bin
   cp -P $PKG_BUILD/capmt_ca.so $ADDON_BUILD/$PKG_ADDON_ID/bin
+  cp -P $(get_build_dir comskip)/.install_pkg/usr/bin/comskip $ADDON_BUILD/$PKG_ADDON_ID/bin
 
-  #dvb-scan files
+  # dvb-scan files
   mkdir -p $ADDON_BUILD/$PKG_ADDON_ID/dvb-scan
   cp -r $(get_build_dir tvh-dtv-scan-tables)/atsc \
         $(get_build_dir tvh-dtv-scan-tables)/dvb-* \

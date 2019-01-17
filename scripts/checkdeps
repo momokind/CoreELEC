@@ -1,22 +1,7 @@
 #!/bin/bash
 
-################################################################################
-#      This file is part of OpenELEC - http://www.openelec.tv
-#      Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
-#
-#  OpenELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  OpenELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
 
 . config/options ""
 
@@ -56,7 +41,7 @@ get_deps() {
 get_yes_no()
 {
   local ans
-  read -p "Would you like to install the needed tools ? (y/n) " ans
+  read -p "Would you like to install the needed tools? (y/n) " ans
   [ "${ans,,}" = "y" ] && return 0
   [ "${ans,,}" = "yes" ] && return 0
   return 1
@@ -75,15 +60,15 @@ DISTRO=${DISTRO,,}
 deps=(wget bash bc gcc sed patch lsdiff tar bzip2 gzip perl gawk gperf zip unzip diff lzop)
 deps_pkg=(wget bash bc gcc sed patch patchutils tar bzip2 gzip perl gawk gperf zip unzip diffutils lzop)
 
-files=(/usr/include/stdio.h /usr/include/ncurses.h /usr/include/X11/Xutil.h /usr/lib/go-1.10/bin/go)
-files_pkg=(libc6-dev libncurses5-dev libx11-dev golang-1.10)
+files=(/usr/include/stdio.h /usr/include/ncurses.h)
+files_pkg=(libc6-dev libncurses5-dev)
 
 perl_mod=(JSON XML::Parser)
 
 case "$DISTRO" in
     fedora|centos|rhel)
-      deps+=(g++ mkfontscale mkfontdir bdftopcf xsltproc java python)
-      deps_pkg+=(gcc-c++ xorg-x11-font-utils xorg-x11-font-utils xorg-x11-font-utils libxslt java-1.7.0-openjdk python2)
+      deps+=(g++ mkfontscale mkfontdir bdftopcf xsltproc java python parallel pigz)
+      deps_pkg+=(gcc-c++ xorg-x11-font-utils xorg-x11-font-utils xorg-x11-font-utils libxslt java-1.7.0-openjdk python2 parallel pigz)
       if [[ ! $(rpm -qa glibc-static) ]]; then
         deps+=(glibc-static)
         deps_pkg+=(glibc-static)
@@ -95,20 +80,20 @@ case "$DISTRO" in
       files_pkg=(glibc-headers ncurses-devel)
       perl_pkg=(perl-JSON perl-XML-parser)
       ;;
-    gentoo)
-      deps+=(g++ mkfontscale mkfontdir bdftopcf xsltproc java python)
-      deps_pkg+=("gcc[cxx]" mkfontscale mkfontdir bdftopcf libxslt virtual/jre python)
+    gentoo|sabayon)
+      deps+=(g++ mkfontscale mkfontdir bdftopcf xsltproc java python parallel pigz)
+      deps_pkg+=("gcc[cxx]" mkfontscale mkfontdir bdftopcf libxslt virtual/jre python sys-process/parallel pigz)
       files_pkg=(glibc ncurses)
       perl_pkg=(JSON XML-Parser)
       ;;
     arch|manjaro)
-      deps+=(g++ mkfontscale mkfontdir bdftopcf xsltproc java python)
-      deps_pkg+=(g++ xorg-mkfontscale xorg-mkfontdir xorg-bdftopcf libxslt "java-runtime-common jdk8-openjdk" python2)
+      deps+=(g++ mkfontscale mkfontdir bdftopcf xsltproc java python rpcgen parallel pigz)
+      deps_pkg+=(g++ xorg-mkfontscale xorg-mkfontdir xorg-bdftopcf libxslt "java-runtime-common jdk8-openjdk" python2 rpcsvc-proto parallel pigz)
       perl_pkg=(perl-json perl-xml-parser)
       ;;
     opensuse)
-      deps+=( g++ mkfontscale mkfontdir bdftopcf xsltproc java python)
-      deps_pkg+=(gcc-c++ mkfontscale mkfontdir bdftopcf libxslt-tools java-1_8_0-openjdk python)
+      deps+=( g++ mkfontscale mkfontdir bdftopcf xsltproc java python parallel pigz)
+      deps_pkg+=(gcc-c++ mkfontscale mkfontdir bdftopcf libxslt-tools java-1_8_0-openjdk python gnu_parallel pigz)
       if [[ ! $(rpm -qa glibc-devel-static) ]]; then
         deps+=(glibc-devel-static)
         deps_pkg+=(glibc-devel-static)
@@ -116,8 +101,8 @@ case "$DISTRO" in
       perl_pkg=(perl-JSON perl-XML-Parser)
       ;;
     *)
-      deps+=(g++ mkfontscale mkfontdir bdftopcf xsltproc java python)
-      deps_pkg+=(g++ xfonts-utils xfonts-utils xfonts-utils xsltproc default-jre python)
+      deps+=(g++ mkfontscale mkfontdir bdftopcf xsltproc java python parallel pigz)
+      deps_pkg+=(g++ xfonts-utils xfonts-utils xfonts-utils xsltproc default-jre python parallel pigz)
       perl_pkg=(libjson-perl libxml-parser-perl)
       ;;
 esac
@@ -147,31 +132,38 @@ if [ "${#need[@]}" -gt 0 ]; then
   done
   echo "**** You seem to use a $DISTRO system ****"
 
-  case "$DISTRO" in
-    ubuntu|debian|linuxmint|\"elementary\")
-      get_yes_no && sudo apt-get install "${need_pkg[@]}"
-      ;;
-    fedora|centos|rhel)
-      if [ $(which dnf) ]; then YUM=dnf; else YUM=yum; fi
-      get_yes_no && sudo $YUM install "${need_pkg[@]}"
-      ;;
-    gentoo)
-      get_yes_no && sudo emerge --ask --deep "${need_pkg[@]}"
-      ;;
-    mageia)
-      get_yes_no && sudo urpmi "${need_pkg[@]}"
-      ;;
-    arch|manjaro)
-      get_yes_no && sudo pacman -Sy "${need_pkg[@]}"
-      ;;
-    opensuse)
-      get_yes_no && sudo zypper install -y --no-recommends "${need_pkg[@]}"
-      ;;
-    *)
-      echo "**** unsupported distro $DISTRO ****"
-      exit 1
-      ;;
-  esac
+  if command -v sudo >/dev/null; then
+    case "$DISTRO" in
+      ubuntu|debian|linuxmint|\"elementary\")
+        get_yes_no && sudo apt-get install "${need_pkg[@]}"
+        ;;
+      fedora|centos|rhel)
+        command -v dnf >/dev/null && YUM=dnf || YUM=yum
+        get_yes_no && sudo $YUM install "${need_pkg[@]}"
+        ;;
+      gentoo)
+        get_yes_no && sudo emerge --ask --deep "${need_pkg[@]}"
+        ;;
+      sabayon)
+        get_yes_no && sudo equo install --ask "${need_pkg[@]}"
+        ;;
+      mageia)
+        get_yes_no && sudo urpmi "${need_pkg[@]}"
+        ;;
+      arch|manjaro)
+        get_yes_no && sudo pacman -Sy "${need_pkg[@]}"
+        ;;
+      opensuse)
+        get_yes_no && sudo zypper install -y --no-recommends "${need_pkg[@]}"
+        ;;
+      *)
+        echo "**** unsupported distro $DISTRO ****"
+        exit 1
+        ;;
+    esac
+  else
+    echo "The command 'sudo' was not found. Please install necessary packages manually."
+  fi
 fi
 
 get_deps

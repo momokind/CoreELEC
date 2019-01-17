@@ -1,24 +1,9 @@
-################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2017-present Team LibreELEC
-#
-#  LibreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  LibreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="pvr.zattoo"
-PKG_VERSION="eb56bef"
-PKG_SHA256="eda094fc075a703bd3addfc0ff40c458d255292e0fb78548269bce8db74e8389"
+PKG_VERSION="d44651f4c8d7b356c7cbec5738f8eed09522d2e2"
+PKG_SHA256="7db4a946230c652833468ec2c6fe3fdc9f53035959e224e316fe76b2a3e6d10d"
 PKG_REV="2"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"

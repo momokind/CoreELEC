@@ -1,24 +1,10 @@
-################################################################################
-#      This file is part of OpenELEC - http://www.openelec.tv
-#      Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
-#
-#  OpenELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  OpenELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
+# Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="audioencoder.vorbis"
-PKG_VERSION="6ebadfd"
-PKG_SHA256="2c561df3e34efa41be9467bd643fa15af438737632d0422e7e67eb059f53abf9"
+PKG_VERSION="acd7c796109971fa05bf33f620d7b737e5dbd0bb"
+PKG_SHA256="bb624a6926ff932a657d52702d503ffcb416db5065004e9b4207d9c5019f03c4"
 PKG_REV="2"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"

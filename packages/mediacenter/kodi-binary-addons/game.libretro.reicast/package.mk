@@ -1,25 +1,10 @@
-################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2016-present Team LibreELEC
-#
-#  LibreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  LibreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="game.libretro.reicast"
-PKG_VERSION="5c0f1c6"
-PKG_SHA256="cd8b21adfde0f04b052d6c06acff29c5c07f130e1764cfe937856a42f24e1d42"
-PKG_REV="106"
+PKG_VERSION="da758eabc2ac8df92d5dc4688772c7a40d58904c"
+PKG_SHA256="c07d72c50796459611088b44ce4751daaf043b0dae2d4fee7fa008634acdb96a"
+PKG_REV="113"
 # no openGL suport in retroplayer yet
 PKG_ARCH="none"
 PKG_LICENSE="GPL"

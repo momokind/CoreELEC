@@ -1,32 +1,13 @@
-################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2016-present Team LibreELEC
-#
-#  LibreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  LibreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-beetle-vb"
-PKG_VERSION="60a0859"
-PKG_SHA256="3f1c3373a33e4da0e738bdcceaaf0cb5d778f507e1df7dfb8fd2bd5d6fcab31c"
-PKG_ARCH="any"
+PKG_VERSION="93f5b60cf82025a88c88b1cb9b4546a060f0265a"
+PKG_SHA256="fe257a95e4e04fce285fe6607952e6460b77e8636afb1439e6f3bc6b326c07f0"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/beetle-vb-libretro"
 PKG_URL="https://github.com/libretro/beetle-vb-libretro/archive/$PKG_VERSION.tar.gz"
-PKG_SOURCE_DIR="beetle-vb-libretro-$PKG_VERSION*"
 PKG_DEPENDS_TARGET="toolchain kodi-platform"
-PKG_SECTION="emulation"
-PKG_SHORTDESC="Standalone port of Mednafen VB to libretro"
 PKG_LONGDESC="Standalone port of Mednafen VB to libretro"
 
 PKG_LIBNAME="mednafen_vb_libretro.so"

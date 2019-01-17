@@ -1,32 +1,14 @@
-################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2016-present Team LibreELEC
-#
-#  LibreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  LibreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="ffmpegx"
-PKG_VERSION="4.0.1"
-PKG_SHA256="cbb7c3ed5b7a669962dfe7c58dc495279274ac259e75770cccf2d2b0115ff5fb"
-PKG_ARCH="any"
+PKG_VERSION="4.1"
+PKG_SHA256="7afb163d6974693cdad742aa1224c33683c50845c67ee5ae35506efc631ac121"
 PKG_LICENSE="LGPLv2.1+"
 PKG_SITE="https://ffmpeg.org"
 PKG_URL="https://github.com/FFmpeg/FFmpeg/archive/n${PKG_VERSION}.tar.gz"
-PKG_SOURCE_DIR="FFmpeg-n${PKG_VERSION}"
-PKG_DEPENDS_TARGET="toolchain aom bzip2 fdk-aac libvorbis openssl opus x264 x265 zlib"
-PKG_SECTION="multimedia"
-PKG_LONGDESC="FFmpegx is an complete FFmpeg build to support encoding and decoding"
+PKG_DEPENDS_TARGET="toolchain aom bzip2 gnutls libvorbis opus x264 zlib"
+PKG_LONGDESC="FFmpegx is an complete FFmpeg build to support encoding and decoding."
 PKG_BUILD_FLAGS="-gold"
 
 # Dependencies
@@ -34,6 +16,10 @@ get_graphicdrivers
 
 if [ "$KODIPLAYER_DRIVER" == "bcm2835-driver" ]; then
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET bcm2835-driver"
+fi
+
+if [ "$TARGET_ARCH" = "x86_64" ]; then
+  PKG_DEPENDS_TARGET+=" nasm:host x265"
 fi
 
 if [[ ! $TARGET_ARCH = arm ]] || target_has_feature neon; then
@@ -48,14 +34,15 @@ fi
 pre_configure_target() {
   cd $PKG_BUILD
   rm -rf .$TARGET_NAME
+  
+  # pass gnutls to build
+  PKG_CONFIG_PATH="$(get_build_dir gnutls)/.INSTALL_PKG/usr/lib/pkgconfig"
+  CFLAGS="$CFLAGS -I$(get_build_dir gnutls)/.INSTALL_PKG/usr/include"
+  LDFLAGS="$LDFLAGS -L$(get_build_dir gnutls)/.INSTALL_PKG/usr/lib"
 
   if [ "$KODIPLAYER_DRIVER" == "bcm2835-driver" ]; then
     CFLAGS="-DRPI=1 -I$SYSROOT_PREFIX/usr/include/IL -I$SYSROOT_PREFIX/usr/include/interface/vcos/pthreads -I$SYSROOT_PREFIX/usr/include/interface/vmcs_host/linux $CFLAGS"
     PKG_FFMPEG_LIBS="-lbcm_host -ldl -lmmal -lmmal_core -lmmal_util -lvchiq_arm -lvcos -lvcsm"
-  fi
-
-  if [ "$TARGET_ARCH" == "arm" ]; then
-    PKG_FFMPEG_ARM_AO="--enable-hardcoded-tables"
   fi
 
 # HW encoders
@@ -115,10 +102,9 @@ pre_configure_target() {
     --enable-encoder=libaom_av1 \
     \
     `#Audio encoders` \
+    --enable-encoder=aac \
     --enable-encoder=ac3 \
     --enable-encoder=eac3 \
-    --enable-libfdk-aac \
-    --enable-encoder=libfdk-aac \
     --enable-encoder=flac \
     --enable-libmp3lame \
     --enable-encoder=libmp3lame \
@@ -152,7 +138,7 @@ configure_target() {
     \
     `#Licensing options` \
     --enable-gpl \
-    --enable-nonfree \
+    --disable-nonfree \
     \
     `#Documentation options` \
     --disable-doc \
@@ -189,10 +175,11 @@ configure_target() {
     --extra-ldflags="$LDFLAGS" \
     --extra-libs="$PKG_FFMPEG_LIBS" \
     --enable-pic \
-    --enable-openssl \
+    --enable-gnutls \
+    --disable-openssl \
     \
     `#Advanced options` \
-    $PKG_FFMPEG_ARM_AO \
+    --disable-hardcoded-tables \
 
 }
 

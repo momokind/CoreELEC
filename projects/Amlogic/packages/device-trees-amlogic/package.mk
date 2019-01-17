@@ -1,27 +1,15 @@
-################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2016-present Team LibreELEC
-#
-#  LibreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  LibreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
+# Copyright (C) 2018-present CoreELEC (https://coreelec.org)
 
 PKG_NAME="device-trees-amlogic"
-PKG_VERSION="bdd1e7d"
-PKG_SHA256="26fdb5c5346ef7a8ebc34575f0a3b5d6f891b7b78c0f0f8c15cda6f54bfdaecb"
+PKG_VERSION="0f02782b7f8eba79c9e72ea80cd4c1ccaa5f2fa8"
+PKG_SHA256="a63ac8c1267bff094fb4813a14bbb2c9b3ce80e2ac6531bac3a7216cbf10e8b6"
 PKG_LICENSE="GPL"
+PKG_SITE="https://github.com/CoreELEC/device-trees-amlogic"
 PKG_URL="https://github.com/CoreELEC/device-trees-amlogic/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
+PKG_LONGDESC="Device trees for Amlogic devices." 
 PKG_IS_KERNEL_PKG="yes"
 PKG_TOOLCHAIN="manual"
 
@@ -33,7 +21,7 @@ make_target() {
   EXTRA_TREES=( \
                 gxbb_p201 gxbb_p200_1G_wetek_hub gxbb_p200_2G_wetek_play_2 \
                 gxl_p212_1g gxl_p212_2g gxl_p281_1g gxl_p212_1g_lepotato gxl_p212_2g_lepotato \
-                gxm_q200_2g gxm_q201_1g gxm_q201_2g \
+                gxm_q200_2g gxm_q201_1g gxm_q201_2g gxl_p231_1g_m8s_dvb \
 	      )
 
   # Add trees to the list
@@ -71,7 +59,7 @@ make_target() {
 
   # Compile device trees
   kernel_make $DTB_LIST_FILTERED
-  mv arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/*.dtb $PKG_BUILD
+  cp arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/*.dtb $PKG_BUILD
 
   popd > /dev/null
 }

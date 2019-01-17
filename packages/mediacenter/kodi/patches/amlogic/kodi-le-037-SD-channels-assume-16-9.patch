@@ -4,10 +4,10 @@ Subject: [PATCH] VideoPlayer: SD channels assume 16:9
 
 --- a/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp	2017-10-09 15:16:45.730788596 +0200
 +++ b/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecAmlogic.cpp	2017-10-09 15:16:51.125484596 +0200
-@@ -91,6 +91,12 @@ CDVDVideoCodecAmlogic::Open
-     case AV_CODEC_ID_MPEG2VIDEO_XVMC:
-       if (m_hints.width <= CSettings::GetInstance().GetInt(CSettings::SETTING_VIDEOPLAYER_USEAMCODECMPEG2))
-         return false;
+@@ -130,6 +130,12 @@
+     case AV_CODEC_ID_MPEG2VIDEO:
+       if (m_hints.width <= CServiceBroker::GetSettings().GetInt(CSettings::SETTING_VIDEOPLAYER_USEAMCODECMPEG2))
+         goto FAIL;
 +
 +      // if we have SD PAL content assume it is widescreen
 +      // correct aspect ratio will be detected later anyway
@@ -32,15 +32,7 @@ Subject: [PATCH] VideoPlayer: SD channels assume 16:9
  
        break;
      case AV_CODEC_ID_MPEG4:
-@@ -232,6 +232,7 @@
-       m_hints.extrasize = m_bitstream->GetExtraSize();
-       m_hints.extradata = malloc(m_hints.extrasize);
-       memcpy(m_hints.extradata, m_bitstream->GetExtraData(), m_hints.extrasize);
-+      m_hints.aspect = 16.0 / 9.0;;
-       break;
-     default:
-       CLog::Log(LOGDEBUG, "%s: Unknown hints.codec(%d", __MODULE_NAME__, m_hints.codec);
-@@ -579,6 +585,7 @@
+@@ -579,6 +586,7 @@
        m_hints.width    = m_h264_sequence->width;
        m_hints.height   = m_h264_sequence->height;
        m_hints.aspect   = m_h264_sequence->ratio;

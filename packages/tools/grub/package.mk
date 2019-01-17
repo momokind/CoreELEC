@@ -1,20 +1,5 @@
-################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2016-present Team LibreELEC
-#
-#  LibreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  LibreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="grub"
 PKG_VERSION="2.02"
@@ -24,24 +9,22 @@ PKG_LICENSE="GPLv3"
 PKG_SITE="https://www.gnu.org/software/grub/index.html"
 PKG_URL="http://git.savannah.gnu.org/cgit/grub.git/snapshot/$PKG_NAME-$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain flex freetype:host"
-PKG_SECTION="tools"
-PKG_SHORTDESC="GNU GRUB is a Multiboot boot loader."
-PKG_LONGDESC="GNU GRUB is a Multiboot boot loader that was derived from GRUB, the GRand Unified Bootloader, which was originally designed and implemented by Erich Stefan Boleyn"
+PKG_LONGDESC="GRUB is a Multiboot boot loader."
 PKG_TOOLCHAIN="configure"
 
-PKG_CONFIGURE_OPTS_TARGET="--target=i386-pc-linux \
-                           --disable-nls \
-                           --with-platform=efi"
+pre_configure_target() {
+  PKG_CONFIGURE_OPTS_TARGET="--target=i386-pc-linux \
+                             --disable-nls \
+                             --with-platform=efi"
 
   unset CFLAGS
   unset CPPFLAGS
   unset CXXFLAGS
   unset LDFLAGS
-
-pre_configure_target() {
   unset CPP
+
   cd $PKG_BUILD
-     ./autogen.sh
+    ./autogen.sh
 }
 
 make_target() {

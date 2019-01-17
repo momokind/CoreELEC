@@ -1,31 +1,13 @@
-################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2017-present Team LibreELEC
-#
-#  LibreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  LibreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="mali-rockchip"
-PKG_VERSION="12daf22"
+PKG_VERSION="12daf22c405a4f8faf6cbc4d2e88b85b36dc61d9"
 PKG_SHA256="e6004e0f5a8a4aba098d301b3f964e2a9a961bb79f180d55ea6e9e73cd6eb874"
 PKG_ARCH="arm aarch64"
 PKG_LICENSE="nonfree"
 PKG_SITE="https://github.com/rockchip-linux/libmali"
 PKG_URL="https://github.com/rockchip-linux/libmali/archive/$PKG_VERSION.tar.gz"
-PKG_SOURCE_DIR="libmali-$PKG_VERSION*"
-PKG_SECTION="graphics"
-PKG_SHORTDESC="mali-rockchip: OpenGL ES user-space binary for the ARM Mali GPU family"
 PKG_LONGDESC="mali-rockchip: OpenGL ES user-space binary for the ARM Mali GPU family"
 PKG_TOOLCHAIN="manual"
 
@@ -101,11 +83,4 @@ makeinstall_target() {
     ln -sfv libmali.so $INSTALL/usr/lib/libGLESv2.so
     ln -sfv libmali.so $INSTALL/usr/lib/libGLESv2.so.2
     ln -sfv libmali.so $INSTALL/usr/lib/libgbm.so
-
-  mkdir -p $INSTALL/usr/lib/modules-load.d
-    if [ "$MALI_FAMILY" = "t760" -o "$MALI_FAMILY" = "t860" ]; then
-      echo "midgard_kbase" > $INSTALL/usr/lib/modules-load.d/mali.conf
-    elif [ "$MALI_FAMILY" = "450" -o "$MALI_FAMILY" = "400" ]; then
-      echo "mali" > $INSTALL/usr/lib/modules-load.d/mali.conf
-    fi
 }

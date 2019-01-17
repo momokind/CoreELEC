@@ -1,32 +1,13 @@
-################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2016-present Team LibreELEC
-#
-#  LibreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  LibreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-pcsx-rearmed"
-PKG_VERSION="5095009"
-PKG_SHA256="c6a704abbfcd5be27f83582f4c3a6509baa314803979842bbaffeb4d80483bfb"
-PKG_ARCH="arm"
+PKG_VERSION="28ea3e2d87c4e239d8853b10c4496f82feb9d982"
+PKG_SHA256="521c4e22bf3b43dfaa0511046adde08daeb1565092f0f93794bd55cf2caac5e0"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/pcsx_rearmed"
 PKG_URL="https://github.com/libretro/pcsx_rearmed/archive/$PKG_VERSION.tar.gz"
-PKG_SOURCE_DIR="pcsx_rearmed-$PKG_VERSION*"
 PKG_DEPENDS_TARGET="toolchain kodi-platform"
-PKG_SECTION="emulation"
-PKG_SHORTDESC="game.libretro.pcsx-rearmed: PCSX Rearmed for Kodi"
 PKG_LONGDESC="game.libretro.pcsx-rearmed: PCSX Rearmed for Kodi"
 PKG_TOOLCHAIN="manual"
 PKG_BUILD_FLAGS="-gold"
@@ -46,13 +27,13 @@ make_target() {
   
   case $TARGET_ARCH in
     aarch64)
-      make -f Makefile.libretro platform=aarch64
+      make -f Makefile.libretro platform=aarch64 GIT_VERSION=$PKG_VERSION
       ;;
     arm)
-      make -f Makefile.libretro USE_DYNAREC=1
+      make -f Makefile.libretro USE_DYNAREC=1 GIT_VERSION=$PKG_VERSION
       ;;
-    x86-64)
-      make -f Makefile.libretro
+    x86_64)
+      make -f Makefile.libretro GIT_VERSION=$PKG_VERSION
       ;;
   esac
 }

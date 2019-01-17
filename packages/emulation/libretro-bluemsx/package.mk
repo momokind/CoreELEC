@@ -1,32 +1,13 @@
-################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2016-present Team LibreELEC
-#
-#  LibreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  LibreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-bluemsx"
-PKG_VERSION="406c985"
-PKG_SHA256="a668945f44b950eb844dc83e8f0b673bda8fd0bab6e4ff74f00a56779cb457c3"
-PKG_ARCH="any"
+PKG_VERSION="b75da4e3394fd3c956a09958a97b67bc6db79f4d"
+PKG_SHA256="29da5922f5e5f1ad3e3d3ff4c9fb1d4cfa15e08a53b309027ce42977b8d76805"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/blueMSX-libretro"
 PKG_URL="https://github.com/libretro/blueMSX-libretro/archive/$PKG_VERSION.tar.gz"
-PKG_SOURCE_DIR="blueMSX-libretro-$PKG_VERSION*"
 PKG_DEPENDS_TARGET="toolchain kodi-platform"
-PKG_SECTION="emulation"
-PKG_SHORTDESC="game.libretro.bluemsx: BlueMSX for Kodi"
 PKG_LONGDESC="game.libretro.bluemsx: BlueMSX for Kodi"
 
 PKG_LIBNAME="bluemsx_libretro.so"

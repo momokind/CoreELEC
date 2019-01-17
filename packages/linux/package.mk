@@ -1,32 +1,14 @@
-################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2017-present Team LibreELEC
-#      Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
-#
-#  LibreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  LibreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
+# Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="linux"
-PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.kernel.org"
 PKG_DEPENDS_HOST="ccache:host"
 PKG_DEPENDS_TARGET="toolchain cpio:host kmod:host pciutils xz:host wireless-regdb keyutils $KERNEL_EXTRA_DEPENDS_TARGET"
 PKG_DEPENDS_INIT="toolchain"
 PKG_NEED_UNPACK="$LINUX_DEPENDS"
-PKG_SECTION="linux"
-PKG_SHORTDESC="linux26: The Linux kernel 2.6 precompiled kernel binary image and modules"
 PKG_LONGDESC="This package contains a precompiled kernel image and the modules."
 PKG_IS_KERNEL_PKG="yes"
 
@@ -37,32 +19,33 @@ case "$LINUX" in
     PKG_VERSION="95ba9d626c0fce672caa296f5911ab9190881642"
     PKG_SHA256="df34b086993fd3552efae92d84d28990a61a1ca79a8703a4b64241ab80e3b6db"
     PKG_URL="https://github.com/LibreELEC/linux-amlogic/archive/$PKG_VERSION.tar.gz"
-    PKG_SOURCE_DIR="linux-amlogic-$PKG_VERSION"
+    PKG_SOURCE_NAME="linux-$LINUX-$PKG_VERSION.tar.gz"
     PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET aml-dtbtools:host u-boot-tools-aml:host"
     PKG_BUILD_PERF="no"
     ;;
   amlogic-3.14)
-    PKG_VERSION="c864b478993fa356d93c81e907b9e399144e908f"
-    PKG_SHA256="763dd3ef998e11b6aa16c28fbc4aa948ff0486ac3690ffe4157849cfa1a46cd4"
+    PKG_VERSION="cd10ee21605125bf6c2bbe7b65b536900e28a781"
+    PKG_SHA256="777ef56ee38b4e281f6ef9e84da4ef8dc42c44e39e121999f42bc6d03acaf848"
     PKG_URL="https://github.com/CoreELEC/linux-amlogic/archive/$PKG_VERSION.tar.gz"
-    PKG_SOURCE_DIR="linux-amlogic-$PKG_VERSION"
+    PKG_SOURCE_NAME="linux-$LINUX-$PKG_VERSION.tar.gz"
     PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET aml-dtbtools:host"
     PKG_BUILD_PERF="no"
     ;;
   rockchip-4.4)
-    PKG_VERSION="eae92ae2b930999857df47c3057327c1c490454b"
-    PKG_SHA256="da453ca6ecefc3719a1165bc7b08fe00fc2b50ab64f6289ef6f3670a9fc1ceca"
+    PKG_VERSION="aa8bacf821e5c8ae6dd8cae8d64011c741659945"
+    PKG_SHA256="a2760fe89a15aa7be142fd25fb08ebd357c5d855c41f1612cf47c6e89de39bb3"
     PKG_URL="https://github.com/rockchip-linux/kernel/archive/$PKG_VERSION.tar.gz"
-    PKG_SOURCE_DIR="kernel-$PKG_VERSION"
+    PKG_SOURCE_NAME="linux-$LINUX-$PKG_VERSION.tar.gz"
     ;;
   raspberrypi)
-    PKG_VERSION="58eb131ce78d1976dad26c21bd75a7da290cd6aa" # 4.14.48
-    PKG_SHA256="0eda040a9ef97274d96069008785d65ca343c66f91e759ff261a93ee9af1ed7a"
+    PKG_VERSION="7e312d57b01683ee93699fdac1121d5cc62fb211" # 4.19.14
+    PKG_SHA256="666ffbf5783b08a144e00c7f94a81e60678ce14e1f809a9126d62ea67981de24"
     PKG_URL="https://github.com/raspberrypi/linux/archive/$PKG_VERSION.tar.gz"
+    PKG_SOURCE_NAME="linux-$LINUX-$PKG_VERSION.tar.gz"
     ;;
   *)
-    PKG_VERSION="4.17.2"
-    PKG_SHA256="4cebcd6f4ddc49e68543a6d920582d9e0eca431be89f9c1b85fd4ecf1dd87b9c"
+    PKG_VERSION="4.19.14"
+    PKG_SHA256="24326849dd5120186d8db165ad4410bf0eb28ef07a20141acbad49f125f71c46"
     PKG_URL="https://www.kernel.org/pub/linux/kernel/v4.x/$PKG_NAME-$PKG_VERSION.tar.xz"
     PKG_PATCH_DIRS="default"
     ;;
@@ -82,7 +65,7 @@ if [ "$PKG_BUILD_PERF" != "no" ] && grep -q ^CONFIG_PERF_EVENTS= $PKG_KERNEL_CFG
 fi
 
 if [ "$TARGET_ARCH" = "x86_64" ]; then
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET intel-ucode:host kernel-firmware"
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET intel-ucode:host kernel-firmware elfutils:host"
 fi
 
 if [ "$BUILD_ANDROID_BOOTIMG" = "yes" ]; then
@@ -223,7 +206,7 @@ make_target() {
   ( cd $ROOT
     rm -rf $BUILD/initramfs
     $SCRIPTS/install initramfs
-  )
+  ) || die "FAILURE: Building initramfs"
 
   if [ "$BOOTLOADER" = "u-boot" -a -n "$KERNEL_UBOOT_EXTRA_TARGET" ]; then
     for extra_target in "$KERNEL_UBOOT_EXTRA_TARGET"; do
@@ -231,43 +214,22 @@ make_target() {
     done
   fi
 
-  kernel_make $KERNEL_TARGET $KERNEL_MAKE_EXTRACMD
+  # the modules target is required to get a proper Module.symvers
+  # file with symbols from built-in and external modules.
+  # Without that it'll contain only the symbols from the kernel
+  kernel_make $KERNEL_TARGET $KERNEL_MAKE_EXTRACMD modules
 
   if [ "$BUILD_ANDROID_BOOTIMG" = "yes" ]; then
-    DTB_BLOBS=($(ls arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/*.dtb 2>/dev/null || true))
-    DTB_BLOBS_COUNT="${#DTB_BLOBS[@]}"
-    DTB_BLOB_OUTPUT="arch/$TARGET_KERNEL_ARCH/boot/dtb.img"
-    ANDROID_BOOTIMG_SECOND="--second $DTB_BLOB_OUTPUT"
-
-    if [ "$DTB_BLOBS_COUNT" -gt 1 ]; then
-      $TOOLCHAIN/bin/dtbTool -o arch/$TARGET_KERNEL_ARCH/boot/dtb.img -p scripts/dtc/ arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic/
-    elif [ "$DTB_BLOBS_COUNT" -eq 1 ]; then
-      cp -PR $DTB_BLOBS $DTB_BLOB_OUTPUT
-    else
-      ANDROID_BOOTIMG_SECOND=""
-    fi
-
-    LDFLAGS="" mkbootimg --kernel arch/$TARGET_KERNEL_ARCH/boot/$KERNEL_TARGET --ramdisk $BUILD/image/initramfs.cpio \
-      $ANDROID_BOOTIMG_SECOND $ANDROID_BOOTIMG_OPTIONS --output arch/$TARGET_KERNEL_ARCH/boot/boot.img
-
+    find_file_path bootloader/mkbootimg && source ${FOUND_PATH}
     mv -f arch/$TARGET_KERNEL_ARCH/boot/boot.img arch/$TARGET_KERNEL_ARCH/boot/$KERNEL_TARGET
-
   fi
 }
 
 makeinstall_target() {
   if [ "$BOOTLOADER" = "u-boot" ]; then
     mkdir -p $INSTALL/usr/share/bootloader
-    if [ -d arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic -a -f arch/$TARGET_KERNEL_ARCH/boot/dtb.img ]; then
-      if [ "$DEVICE" != "S905" -a "$DEVICE" != "S912" ]; then
-        cp arch/$TARGET_KERNEL_ARCH/boot/dtb.img $INSTALL/usr/share/bootloader/dtb.img 2>/dev/null || :
-      fi
-    else
-      for dtb in arch/$TARGET_KERNEL_ARCH/boot/dts/*.dtb arch/$TARGET_KERNEL_ARCH/boot/dts/*/*.dtb; do
-        if [ -f $dtb ]; then
-          cp -v $dtb $INSTALL/usr/share/bootloader
-        fi
-      done
+    if [ -d arch/$TARGET_KERNEL_ARCH/boot/dts/amlogic ]; then
+      cp arch/$TARGET_KERNEL_ARCH/boot/*dtb.img $INSTALL/usr/share/bootloader/ 2>/dev/null || :
     fi
   elif [ "$BOOTLOADER" = "bcm2835-bootloader" ]; then
     mkdir -p $INSTALL/usr/share/bootloader/overlays
@@ -312,10 +274,6 @@ makeinstall_init() {
 
 post_install() {
   mkdir -p $INSTALL/$(get_full_firmware_dir)/
-    ln -sf /storage/.config/firmware/ $INSTALL/$(get_full_firmware_dir)/updates
-
-  # bluez looks in /etc/firmware/
-    ln -sf /$(get_full_firmware_dir)/ $INSTALL/etc/firmware
 
   # regdb and signature is now loaded as firmware by 4.15+
     if grep -q ^CONFIG_CFG80211_REQUIRE_SIGNED_REGDB= $PKG_BUILD/.config; then

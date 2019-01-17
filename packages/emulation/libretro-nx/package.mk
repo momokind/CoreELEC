@@ -1,32 +1,13 @@
-################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2016-present Team LibreELEC
-#
-#  LibreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  LibreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-nx"
-PKG_VERSION="4321bbc"
-PKG_SHA256="4b485533aa9ea8f5aa9e85f251c272b63f8f6051febf8fb7304cfc9915dddce3"
-PKG_ARCH="any"
+PKG_VERSION="b460024c23ef2cb8a70e1ae00b6b425abaaf49a4"
+PKG_SHA256="26b5bb43fc124c0cc8cf3c2c37ef03ba1c3cf8b707e2edbf3b9eeb4d8b9fd37d"
 PKG_LICENSE="GPLv3"
 PKG_SITE="https://github.com/libretro/nxengine-libretro"
 PKG_URL="https://github.com/libretro/nxengine-libretro/archive/$PKG_VERSION.tar.gz"
-PKG_SOURCE_DIR="nxengine-libretro-$PKG_VERSION*"
 PKG_DEPENDS_TARGET="toolchain kodi-platform"
-PKG_SECTION="emulation"
-PKG_SHORTDESC="game.libretro.nx: nx for Kodi"
 PKG_LONGDESC="game.libretro.nx: nx for Kodi"
 
 PKG_LIBNAME="nxengine_libretro.so"

@@ -1,42 +1,38 @@
-################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2016-present Team LibreELEC
-#
-#  LibreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  LibreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-fbalpha"
-PKG_VERSION="9d1b3af"
-PKG_SHA256="9d42b88bc8144a1ff8495c19c1d5896949103c5ac4682e2204901d491413b2c2"
-PKG_ARCH="any"
+PKG_VERSION="bfededf36c4ca6f37926a66822d860a9754080c3"
+PKG_SHA256="0c31bb6fe84f2dfa9adead0a6fd23cb2d516c96c7213cec89e66444e13fe8478"
 PKG_LICENSE="GPLv3"
 PKG_SITE="https://github.com/libretro/fbalpha"
 PKG_URL="https://github.com/libretro/fbalpha/archive/$PKG_VERSION.tar.gz"
-PKG_SOURCE_DIR="fbalpha-$PKG_VERSION*"
 PKG_DEPENDS_TARGET="toolchain kodi-platform"
-PKG_SECTION="emulation"
-PKG_SHORTDESC="game.libretro.fba: fba for Kodi"
 PKG_LONGDESC="game.libretro.fba: fba for Kodi"
-PKG_TOOLCHAIN="manual"
-# linking takes too long with lto
+PKG_TOOLCHAIN="make"
 
 PKG_LIBNAME="fbalpha_libretro.so"
 PKG_LIBPATH="$PKG_LIBNAME"
 PKG_LIBVAR="FBALPHA_LIB"
 
-make_target() {
-  make -f makefile.libretro
+pre_make_target() {
+  PKG_MAKE_OPTS_TARGET="-f makefile.libretro CC=$CC CXX=$CXX GIT_VERSION=${PKG_VERSION:0:7}"
+
+  if [ "$PROJECT" = "RPi" ]; then
+    case $DEVICE in
+      RPi)
+        PKG_MAKE_OPTS_TARGET+=" platform=armv"
+        ;;
+      RPi2)
+        PKG_MAKE_OPTS_TARGET+=" platform=rpi2"
+        ;;
+    esac
+  else
+    # NEON Support ?
+    if target_has_feature neon; then
+      PKG_MAKE_OPTS_TARGET+=" HAVE_NEON=1"
+    fi
+  fi
 }
 
 makeinstall_target() {

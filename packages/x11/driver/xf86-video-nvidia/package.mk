@@ -1,37 +1,20 @@
-################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2016-present Team LibreELEC
-#      Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
-#
-#  LibreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  LibreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
+# Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="xf86-video-nvidia"
 # Remember to run "python packages/x11/driver/xf86-video-nvidia/scripts/make_nvidia_udev.py" and commit changes to
 # "packages/x11/driver/xf86-video-nvidia/udev.d/96-nvidia.rules" whenever bumping version.
 # Host may require installation of python-lxml and python-requests packages.
-PKG_VERSION="390.67"
-PKG_SHA256="4d9d4a636d568a93412cd9a2db08c594adef20861707dfdfbd6ae15db3292b26"
+PKG_VERSION="410.93"
+PKG_SHA256="b1ce054f8307080a257538ab82873e8b8022183f68e08e20fbb07089f7ddbb08"
 PKG_ARCH="x86_64"
 PKG_LICENSE="nonfree"
 PKG_SITE="http://www.nvidia.com/"
 PKG_URL="http://us.download.nvidia.com/XFree86/Linux-x86_64/$PKG_VERSION/NVIDIA-Linux-x86_64-$PKG_VERSION-no-compat32.run"
 PKG_DEPENDS_TARGET="toolchain util-macros linux xorg-server libvdpau"
 PKG_NEED_UNPACK="$LINUX_DEPENDS"
-PKG_SECTION="x11/driver"
-PKG_SHORTDESC="xf86-video-nvidia: The Xorg driver for NVIDIA video chips"
-PKG_LONGDESC="These binary drivers provide optimized hardware acceleration of OpenGL applications via a direct-rendering X Server. AGP, PCIe, SLI, TV-out and flat panel displays are also supported. This version only supports GeForce 8xxx and higher of the Geforce GPUs plus complimentary Quadros and nforce."
+PKG_LONGDESC="The Xorg driver for NVIDIA video chips."
 PKG_TOOLCHAIN="manual"
 
 unpack() {
@@ -56,7 +39,7 @@ makeinstall_target() {
 
   mkdir -p $INSTALL/$XORG_PATH_MODULES/extensions
   # rename to not conflicting with Mesa libGL.so
-    cp -P libglx.so* $INSTALL/$XORG_PATH_MODULES/extensions/libglx_nvidia.so
+    cp -P libglxserver_nvidia.so.$PKG_VERSION $INSTALL/$XORG_PATH_MODULES/extensions/libglx_nvidia.so
 
   mkdir -p $INSTALL/etc/X11
     cp $PKG_DIR/config/*.conf $INSTALL/etc/X11

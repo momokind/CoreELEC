@@ -1,39 +1,35 @@
-################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2016-present Team LibreELEC
-#
-#  LibreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  LibreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-ppsspp"
-PKG_VERSION="7f88688"
-PKG_SHA256="4e7c5c40fb16021bf99c56392d2a105c0739aa975540513dba8f6e7044e2f88a"
-PKG_ARCH="x86_64"
+PKG_VERSION="caa506bf2a253a99850a4248a1cb5a399f32467a"
+PKG_SHA256="d59b4d044b761a73e744ab71e207e5b3bdbac819ed2201b79ed4455606ac0719"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/hrydgard/ppsspp"
 PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
-PKG_DEPENDS_TARGET="toolchain glew kodi-platform SDL2 zlib"
-PKG_SECTION="emulation"
-PKG_SHORTDESC="A PSP emulator for Android, Windows, Mac, Linux and Blackberry 10, written in C++."
-PKG_LONGDESC="A PSP emulator for Android, Windows, Mac, Linux and Blackberry 10, written in C++."
+PKG_DEPENDS_TARGET="toolchain SDL2"
+PKG_LONGDESC="A PSP emulator written in C++."
 PKG_TOOLCHAIN="cmake-make"
 
 PKG_LIBNAME="ppsspp_libretro.so"
 PKG_LIBPATH="lib/$PKG_LIBNAME"
 PKG_LIBVAR="PPSSPP_LIB"
 
-PKG_CMAKE_OPTS_TARGET="-DLIBRETRO=ON"
+if [ "$PROJECT" = "Amlogic" ] || [ "$PROJECT" = "RPi" ]; then
+  case $DEVICE in
+     KVIM|RPi2|S905|Odroid_C2)
+      PKG_ARCH_ARM="-DARMV7=ON \
+                -DUSING_FBDEV=ON \
+                -DUSING_EGL=ON \
+                -DUSING_GLES2=ON \
+                -DUSING_X11_VULKAN=OFF"
+     ;;
+  esac
+fi
+
+PKG_CMAKE_OPTS_TARGET="-DLIBRETRO=ON \
+                       -DUSE_SYSTEM_FFMPEG=ON \
+                       $PKG_ARCH_ARM"
 
 pre_configure_target() {
   LDFLAGS="$LDFLAGS -lpthread"

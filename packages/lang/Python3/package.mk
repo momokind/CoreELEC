@@ -1,36 +1,18 @@
-################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2017-present Team LibreELEC
-#
-#  LibreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  LibreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="Python3"
-PKG_VERSION="3.6.5"
-PKG_SHA256="f434053ba1b5c8a5cc597e966ead3c5143012af827fd3f0697d21450bb8d87a6"
-PKG_ARCH="any"
+# When changing PKG_VERSION remember to sync PKG_PYTHON_VERSION!
+PKG_VERSION="3.7.1"
+PKG_SHA256="fa7e2b8e8c9402f192ad56dc4f814089d1c4466c97d780f5e5acc02c04243d6d"
 PKG_LICENSE="OSS"
 PKG_SITE="http://www.python.org/"
-PKG_URL="https://www.python.org/ftp/python/$PKG_VERSION/${PKG_NAME::-1}-$PKG_VERSION.tar.xz"
-PKG_SOURCE_DIR="${PKG_NAME::-1}-$PKG_VERSION*"
-PKG_DEPENDS_HOST="zlib:host bzip2:host"
+PKG_URL="http://www.python.org/ftp/python/$PKG_VERSION/${PKG_NAME::-1}-$PKG_VERSION.tar.xz"
+PKG_DEPENDS_HOST="zlib:host bzip2:host libffi:host util-linux:host"
 PKG_DEPENDS_TARGET="toolchain sqlite expat zlib bzip2 openssl Python3:host readline ncurses"
-PKG_SECTION="lang"
-PKG_SHORTDESC="python3: The Python3 programming language"
-PKG_LONGDESC="Python3 is an interpreted object-oriented programming language, and is often compared with Tcl, Perl, Java or Scheme."
+PKG_LONGDESC="Python3 is an interpreted object-oriented programming language."
 
-PKG_PYTHON_VERSION=python3.6
+PKG_PYTHON_VERSION=python3.7
 
 PKG_TOOLCHAIN="autotools"
 
@@ -98,7 +80,6 @@ PKG_CONFIGURE_OPTS_TARGET="ac_cv_prog_HAS_HG=/bin/false
                            --without-ensurepip
                            --with-threads
                            --enable-ipv6
-                           --enable-optimizations
 "
 
 post_unpack() {

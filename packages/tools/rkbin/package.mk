@@ -1,30 +1,13 @@
-################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2017-present Team LibreELEC
-#
-#  LibreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  LibreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="rkbin"
-PKG_VERSION="f64ded6"
-PKG_SHA256="7b858ac964058da83cd96314184d2c5f834a9b2cc6b805be424a661fd9836b54"
+# Version is: Kwiboo/tag:libreelec-120fe36
+PKG_VERSION="120fe36ad34d7026051ecc50840a6a8dc95d759e"
+PKG_SHA256="67f052770b44b4c45b537e34abd59065300703feca6a687d378360bfc2458080"
 PKG_ARCH="arm aarch64"
 PKG_LICENSE="nonfree"
 PKG_SITE="https://github.com/rockchip-linux/rkbin"
 PKG_URL="https://github.com/rockchip-linux/rkbin/archive/$PKG_VERSION.tar.gz"
-PKG_SOURCE_DIR="rkbin-$PKG_VERSION*"
-PKG_SECTION="tools"
-PKG_SHORTDESC="rkbin: Rockchip Firmware and Tool Binaries"
 PKG_LONGDESC="rkbin: Rockchip Firmware and Tool Binaries"
 PKG_TOOLCHAIN="manual"

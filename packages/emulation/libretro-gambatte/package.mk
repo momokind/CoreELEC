@@ -1,32 +1,13 @@
-################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2016-present Team LibreELEC
-#
-#  LibreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  LibreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-gambatte"
-PKG_VERSION="d1e3826"
-PKG_SHA256="f51d3ece6ca12b865ae73c091a1f44cea9e4865bb6333b503818b82401e234b3"
-PKG_ARCH="any"
+PKG_VERSION="85edb5b900dcdc12df7d734f0cedcdcfbf84d70f"
+PKG_SHA256="fb83d45b36d211477171fc7ae2faf9afa3022c7c031c97a0fceef45b15bf6d33"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/gambatte-libretro"
 PKG_URL="https://github.com/libretro/gambatte-libretro/archive/$PKG_VERSION.tar.gz"
-PKG_SOURCE_DIR="gambatte-libretro-$PKG_VERSION*"
 PKG_DEPENDS_TARGET="toolchain kodi-platform"
-PKG_SECTION="emulation"
-PKG_SHORTDESC="game.libretro.gambatte: Gambatte for Kodi"
 PKG_LONGDESC="game.libretro.gambatte: Gambatte for Kodi"
 
 PKG_LIBNAME="gambatte_libretro.so"

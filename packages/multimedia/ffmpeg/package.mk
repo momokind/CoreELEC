@@ -1,34 +1,15 @@
-################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2017-present Team LibreELEC
-#      Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
-#
-#  LibreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  LibreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
+# Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="ffmpeg"
 # Current branch is: release/4.0-kodi
-PKG_VERSION="e115b34"
-PKG_SHA256="d9aa2a281f002982474b45980553d3669a8c79021cf08e4cfcff5dd6e8e81268"
-PKG_ARCH="any"
+PKG_VERSION="4.0.3-Leia-RC5"
+PKG_SHA256="9a971662e44353c120f2ccf87655571998956e699a2dd800ec708b8b928a53c8"
 PKG_LICENSE="LGPLv2.1+"
 PKG_SITE="https://ffmpeg.org"
 PKG_URL="https://github.com/xbmc/FFmpeg/archive/${PKG_VERSION}.tar.gz"
-PKG_SOURCE_DIR="FFmpeg-${PKG_VERSION}*"
-PKG_DEPENDS_TARGET="toolchain yasm:host zlib bzip2 openssl speex"
-PKG_SECTION="multimedia"
-PKG_SHORTDESC="FFmpeg is a complete, cross-platform solution to record, convert and stream audio and video."
+PKG_DEPENDS_TARGET="toolchain zlib bzip2 openssl speex"
 PKG_LONGDESC="FFmpeg is a complete, cross-platform solution to record, convert and stream audio and video."
 PKG_BUILD_FLAGS="-gold"
 
@@ -73,15 +54,6 @@ if [ "$KODIPLAYER_DRIVER" = "bcm2835-driver" ]; then
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET bcm2835-driver"
 fi
 
-case "$TARGET_ARCH" in
-  arm)
-    PKG_FFMPEG_TABLES="--enable-hardcoded-tables"
-    ;;
-  *)
-    PKG_FFMPEG_TABLES="--disable-hardcoded-tables"
-    ;;
-esac
-
 if target_has_feature neon; then
   PKG_FFMPEG_FPU="--enable-neon"
 else
@@ -89,9 +61,12 @@ else
 fi
 
 if [ "$TARGET_ARCH" = "x86_64" ]; then
-  PKG_FFMPEG_X86ASM="--enable-x86asm --x86asmexe=yasm"
-else
-  PKG_FFMPEG_X86ASM="--disable-x86asm"
+  PKG_DEPENDS_TARGET+=" nasm:host"
+fi
+
+if target_has_feature "(neon|sse)"; then
+  PKG_DEPENDS_TARGET+=" dav1d"
+  PKG_FFMPEG_AV1="--enable-libdav1d"
 fi
 
 pre_configure_target() {
@@ -139,9 +114,7 @@ configure_target() {
               --pkg-config="$TOOLCHAIN/bin/pkg-config" \
               --enable-optimizations \
               --disable-extra-warnings \
-              --disable-ffprobe \
-              --disable-ffplay \
-              --enable-ffmpeg \
+              --disable-programs \
               --enable-avdevice \
               --enable-avcodec \
               --enable-avformat \
@@ -150,7 +123,6 @@ configure_target() {
               --enable-avfilter \
               --disable-devices \
               --enable-pthreads \
-              --disable-w32threads \
               --enable-network \
               --disable-gnutls --enable-openssl \
               --disable-gray \
@@ -166,9 +138,8 @@ configure_target() {
               $PKG_FFMPEG_VDPAU \
               $PKG_FFMPEG_RPI \
               $PKG_FFMPEG_RKMPP \
-              --disable-dxva2 \
               --enable-runtime-cpudetect \
-              $PKG_FFMPEG_TABLES \
+              --disable-hardcoded-tables \
               --disable-encoders \
               --enable-encoder=ac3 \
               --enable-encoder=aac \
@@ -203,6 +174,7 @@ configure_target() {
               --disable-libmp3lame \
               --disable-libopenjpeg \
               --disable-librtmp \
+              $PKG_FFMPEG_AV1 \
               --enable-libspeex \
               --disable-libtheora \
               --disable-libvo-amrwbenc \
@@ -215,9 +187,7 @@ configure_target() {
               --enable-asm \
               --disable-altivec \
               $PKG_FFMPEG_FPU \
-              $PKG_FFMPEG_X86ASM \
-              --disable-symver \
-              --disable-programs
+              --disable-symver
 }
 
 post_makeinstall_target() {

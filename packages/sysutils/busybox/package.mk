@@ -1,53 +1,24 @@
-################################################################################
-#      This file is part of OpenELEC - http://www.openelec.tv
-#      Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
-#
-#  OpenELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  OpenELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
+# Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="busybox"
-PKG_VERSION="1.28.1"
-PKG_SHA256="98fe1d3c311156c597cd5cfa7673bb377dc552b6fa20b5d3834579da3b13652e"
-PKG_ARCH="any"
+PKG_VERSION="1.29.3"
+PKG_SHA256="97648636e579462296478e0218e65e4bc1e9cd69089a3b1aeb810bff7621efb7"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.busybox.net"
 PKG_URL="http://busybox.net/downloads/$PKG_NAME-$PKG_VERSION.tar.bz2"
 PKG_DEPENDS_HOST=""
-PKG_DEPENDS_TARGET="toolchain busybox:host hdparm dosfstools e2fsprogs zip unzip pciutils usbutils parted procps-ng gptfdisk"
-PKG_DEPENDS_INIT="toolchain"
-PKG_SECTION="system"
-PKG_SHORTDESC="BusyBox: The Swiss Army Knife of Embedded Linux"
-PKG_LONGDESC="BusyBox combines tiny versions of many common UNIX utilities into a single small executable. It provides replacements for most of the utilities you usually find in GNU fileutils, shellutils, etc. The utilities in BusyBox generally have fewer options than their full-featured GNU cousins; however, the options that are included provide the expected functionality and behave very much like their GNU counterparts. BusyBox provides a fairly complete environment for any small or embedded system."
+PKG_DEPENDS_TARGET="toolchain busybox:host hdparm dosfstools e2fsprogs zip unzip pciutils usbutils parted procps-ng gptfdisk libtirpc"
+PKG_DEPENDS_INIT="toolchain libtirpc"
+PKG_LONGDESC="BusyBox combines tiny versions of many common UNIX utilities into a single small executable."
 # busybox fails to build with GOLD support enabled with binutils-2.25
 PKG_BUILD_FLAGS="-parallel -gold"
 
-PKG_MAKE_OPTS_HOST="ARCH=$TARGET_ARCH CROSS_COMPILE= KBUILD_VERBOSE=1 install"
-PKG_MAKE_OPTS_TARGET="ARCH=$TARGET_ARCH \
-                      HOSTCC=$HOST_CC \
-                      CROSS_COMPILE=$TARGET_PREFIX \
-                      KBUILD_VERBOSE=1 \
-                      install"
-PKG_MAKE_OPTS_INIT="ARCH=$TARGET_ARCH \
-                    HOSTCC=$HOST_CC \
-                    CROSS_COMPILE=$TARGET_PREFIX \
-                    KBUILD_VERBOSE=1 \
-                    install"
-
 # nano text editor
-  if [ "$NANO_EDITOR" = "yes" ]; then
-    PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET nano"
-  fi
+if [ "$NANO_EDITOR" = "yes" ]; then
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET nano"
+fi
 
 # nfs support
 if [ "$NFS_SUPPORT" = yes ]; then
@@ -55,16 +26,30 @@ if [ "$NFS_SUPPORT" = yes ]; then
 fi
 
 pre_build_target() {
+  PKG_MAKE_OPTS_TARGET="ARCH=$TARGET_ARCH \
+                        HOSTCC=$HOST_CC \
+                        CROSS_COMPILE=$TARGET_PREFIX \
+                        KBUILD_VERBOSE=1 \
+                        install"
+
   mkdir -p $PKG_BUILD/.$TARGET_NAME
   cp -RP $PKG_BUILD/* $PKG_BUILD/.$TARGET_NAME
 }
 
 pre_build_host() {
+  PKG_MAKE_OPTS_HOST="ARCH=$TARGET_ARCH CROSS_COMPILE= KBUILD_VERBOSE=1 install"
+
   mkdir -p $PKG_BUILD/.$HOST_NAME
   cp -RP $PKG_BUILD/* $PKG_BUILD/.$HOST_NAME
 }
 
 pre_build_init() {
+  PKG_MAKE_OPTS_INIT="ARCH=$TARGET_ARCH \
+                      HOSTCC=$HOST_CC \
+                      CROSS_COMPILE=$TARGET_PREFIX \
+                      KBUILD_VERBOSE=1 \
+                      install"
+
   mkdir -p $PKG_BUILD/.$TARGET_NAME-init
   cp -RP $PKG_BUILD/* $PKG_BUILD/.$TARGET_NAME-init
 }
@@ -94,10 +79,6 @@ configure_target() {
       sed -i -e "s|^CONFIG_FEATURE_CROND_SPECIAL_TIMES=.*$|# CONFIG_FEATURE_CROND_SPECIAL_TIMES is not set|" .config
     fi
 
-    if [ ! "$NFS_SUPPORT" = yes ]; then
-      sed -i -e "s|^CONFIG_FEATURE_MOUNT_NFS=.*$|# CONFIG_FEATURE_MOUNT_NFS is not set|" .config
-    fi
-
     if [ ! "$SAMBA_SUPPORT" = yes ]; then
       sed -i -e "s|^CONFIG_FEATURE_MOUNT_CIFS=.*$|# CONFIG_FEATURE_MOUNT_CIFS is not set|" .config
     fi
@@ -105,6 +86,7 @@ configure_target() {
     # optimize for size
     CFLAGS=`echo $CFLAGS | sed -e "s|-Ofast|-Os|"`
     CFLAGS=`echo $CFLAGS | sed -e "s|-O.|-Os|"`
+    CFLAGS="$CFLAGS -I$SYSROOT_PREFIX/usr/include/tirpc"
 
     LDFLAGS="$LDFLAGS -fwhole-program"
 
@@ -122,6 +104,7 @@ configure_init() {
     # optimize for size
     CFLAGS=`echo $CFLAGS | sed -e "s|-Ofast|-Os|"`
     CFLAGS=`echo $CFLAGS | sed -e "s|-O.|-Os|"`
+    CFLAGS="$CFLAGS -I$SYSROOT_PREFIX/usr/include/tirpc"
 
     LDFLAGS="$LDFLAGS -fwhole-program"
 

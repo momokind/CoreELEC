@@ -1,32 +1,15 @@
-################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2016-present Team LibreELEC
-#
-#  LibreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  LibreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="slice-drivers"
-PKG_VERSION="d02f3e7"
-PKG_SHA256="31c32eba1549c8cf6204c5cfdd25ec0480bcc95c0253f06258596189c84926ca"
+PKG_VERSION="8a2bdcd5dc182de899f19b0935d8beeb7f5fdbcb"
+PKG_SHA256="ffb3b9ef5a0e6101d661407447257abf136f1ae206a17bd18d9b204e0b29f050"
 PKG_ARCH="arm"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/LibreELEC/slice-drivers"
 PKG_URL="https://github.com/LibreELEC/slice-drivers/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain linux"
 PKG_NEED_UNPACK="$LINUX_DEPENDS"
-PKG_SECTION="driver"
-PKG_SHORTDESC="linux kernel modules for the Slice box"
 PKG_LONGDESC="linux kernel modules for the Slice box"
 PKG_IS_KERNEL_PKG="yes"
 

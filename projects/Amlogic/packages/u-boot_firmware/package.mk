@@ -1,20 +1,5 @@
-################################################################################
-#      This file is part of CoreELEC - https://coreelec.org
-#      Copyright (C) 2018-present CoreELEC (team (at) coreelec.org)
-#
-#  CoreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  CoreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with CoreELEC. If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2018-present CoreELEC (https://coreelec.org)
 
 PKG_NAME="u-boot_firmware"
 PKG_SITE="https://github.com/hardkernel/u-boot_firmware/"
@@ -27,10 +12,10 @@ PKG_LONGDESC=""
 PKG_TOOLCHAIN=manual
 
 case "$DEVICE" in
-  "Odroid_C2")
-    PKG_VERSION="b7b90c1"
-    PKG_URL="https://github.com/hardkernel/u-boot_firmware/archive/$PKG_VERSION.tar.gz"
-    PKG_SHA256="39bf7c7a62647699572e088259cfe514579c09fa1b1b1ab3fade857b27da5ce9"
+  "S905")
+    PKG_VERSION="2986172ef237858fb95bd5e4fa41ee89a660153e"
+    PKG_URL="https://github.com/CoreELEC/u-boot_firmware/archive/$PKG_VERSION.tar.gz"
+    PKG_SHA256="f22f472f6cff1707789e055a4552b6bcb57671ae7d89044a66fdc4a5803f5a08"
     ;;
 esac
 

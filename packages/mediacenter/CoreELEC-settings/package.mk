@@ -1,33 +1,15 @@
-################################################################################
-#      This file is part of CoreELEC - https://coreelec.org
-#      Copyright (C) 2018-present CoreELEC (team (at) coreelec.org)
-#      Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
-#
-#  CoreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  CoreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with CoreELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
+# Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
+# Copyright (C) 2018-present CoreELEC (https://coreelec.org)
 
 PKG_NAME="CoreELEC-settings"
-PKG_VERSION="f2c1df2"
-PKG_SHA256="49564eb8513d749d5432b3006faea4a52f259105de772f008972bf170ce96177"
-PKG_ARCH="any"
+PKG_VERSION="59e902304f7817d914add1e763d7b740ba261897"
+PKG_SHA256="9b40d2dd33c97049ad14565fdc362b64cb3624f5c9f5bec2435db6e09876fbf9"
 PKG_LICENSE="GPL"
 PKG_SITE="https://coreelec.org"
 PKG_URL="https://github.com/CoreELEC/service.coreelec.settings/archive/$PKG_VERSION.tar.gz"
-PKG_SOURCE_DIR="service.coreelec.settings-$PKG_VERSION*"
 PKG_DEPENDS_TARGET="toolchain Python2 connman pygobject dbus-python"
-PKG_SECTION=""
-PKG_SHORTDESC="CoreELEC-settings: Settings dialog for CoreELEC"
 PKG_LONGDESC="CoreELEC-settings: is a settings dialog for CoreELEC"
 
 PKG_MAKE_OPTS_TARGET="DISTRONAME=$DISTRONAME ROOT_PASSWORD=$ROOT_PASSWORD"
@@ -41,11 +23,6 @@ fi
 post_makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/coreelec
     cp $PKG_DIR/scripts/* $INSTALL/usr/lib/coreelec
-
-#  # bluetooth is optional
-#    if [ ! "$BLUETOOTH_SUPPORT" = yes ]; then
-#      rm -f resources/lib/modules/bluetooth.py
-#    fi
 
   ADDON_INSTALL_DIR=$INSTALL/usr/share/kodi/addons/service.coreelec.settings
 

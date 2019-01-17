@@ -1,32 +1,13 @@
-################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2016-present Team LibreELEC
-#
-#  LibreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  LibreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-genplus"
-PKG_VERSION="5ae12e7"
-PKG_SHA256="afdf96e4c33c70cac010edd1e7b5d2d11ae91e4e1e36ea32c3c81ab725e6b1f0"
-PKG_ARCH="any"
+PKG_VERSION="5993fd8295bafe7b7b132375f6b9dcdda0129e54"
+PKG_SHA256="7935bde543a34bf3a2575d2247ce085113fc00f1c0df7da0e1b4cb29595eec1f"
 PKG_LICENSE="Modified BSD / LGPLv2.1"
 PKG_SITE="https://github.com/libretro/Genesis-Plus-GX"
 PKG_URL="https://github.com/libretro/Genesis-Plus-GX/archive/$PKG_VERSION.tar.gz"
-PKG_SOURCE_DIR="Genesis-Plus-GX-$PKG_VERSION*"
 PKG_DEPENDS_TARGET="toolchain kodi-platform"
-PKG_SECTION="emulation"
-PKG_SHORTDESC="game.libretro.genplus: Genesis Plus GX for Kodi"
 PKG_LONGDESC="game.libretro.genplus: Genesis Plus GX for Kodi"
 PKG_TOOLCHAIN="manual"
 
@@ -35,7 +16,11 @@ PKG_LIBPATH="$PKG_LIBNAME"
 PKG_LIBVAR="GENPLUS_LIB"
 
 make_target() {
-  make -f Makefile.libretro
+  if [ "$ARCH" = "arm" ]; then
+    CFLAGS="$CFLAGS -DALIGN_LONG"
+  fi
+
+  make -f Makefile.libretro GIT_VERSION=$PKG_VERSION
 }
 
 makeinstall_target() {

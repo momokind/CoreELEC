@@ -1,32 +1,21 @@
-################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2018-present Team LibreELEC
-#
-#  LibreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  LibreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="aom"
-PKG_VERSION="96ee0eb"
-PKG_SHA256="37c8d930cc105ccad4987c65751400fc42819b77fd487c9ef19cadee0c95a2d8"
-PKG_ARCH="any"
+PKG_VERSION="06e2c4fa33edb7f27702fbe2ad2311622da956b4"
+PKG_SHA256="9c4d7943de97af0153a38151f40c7a926f331d4a3b7dceea4e179173ce51c654"
 PKG_LICENSE="BSD"
 PKG_SITE="https://www.webmproject.org"
 PKG_URL="http://repo.or.cz/aom.git/snapshot/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
-PKG_SECTION="multimedia"
 PKG_LONGDESC="AV1 Codec Library"
 
 PKG_CMAKE_OPTS_TARGET="-DENABLE_CCACHE=1 \
                        -DENABLE_DOCS=0 \
+                       -DENABLE_EXAMPLES=0 \
+                       -DENABLE_TESTS=0 \
                        -DENABLE_TOOLS=0"
+
+if ! target_has_feature neon; then
+  PKG_CMAKE_OPTS_TARGET+=" -DENABLE_NEON=0 -DENABLE_NEON_ASM=0"
+fi

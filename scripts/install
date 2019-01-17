@@ -1,34 +1,27 @@
 #!/bin/bash
 
-################################################################################
-#      This file is part of OpenELEC - http://www.openelec.tv
-#      Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
-#      Copyright (C) 2010-2011 Roman Weber (roman@openelec.tv)
-#
-#  OpenELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  OpenELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2010-2011 Roman Weber (roman@openelec.tv)
+# Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
+# Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
-. config/options $1
+. config/options "$1"
 
 if [ -z "$1" ]; then
-  echo "usage: $0 package_name"
-  exit 1
+  die "usage: $0 package_name"
+fi
+
+if [ -z "${PKG_NAME}" ]; then
+  die "$(print_color CLR_ERROR "${1}: no package.mk file found")"
 fi
 
 if [ -z "$INSTALL" ] ; then
-  echo "error: '\$INSTALL' not set! this script is not intended to be run manually"
-  exit 1
+  die "error: '\$INSTALL' not set! this script is not intended to be run manually"
+fi
+
+if [ -n "$PKG_ARCH" ]; then
+  listcontains "$PKG_ARCH" "!$TARGET_ARCH" && exit 0
+  listcontains "$PKG_ARCH" "$TARGET_ARCH" || listcontains "$PKG_ARCH" "any" || exit 0
 fi
 
 # set defaults
@@ -42,24 +35,11 @@ fi
 [ -z "$TARGET" ] && TARGET="target"
 
 STAMP=$STAMPS_INSTALL/$PACKAGE_NAME/install_$TARGET
-mkdir -p $STAMPS_INSTALL/$PACKAGE_NAME
-
 [ -f $STAMP ] && exit 0
 
-if [ -n "$PKG_ARCH" ]; then
-  listcontains "$PKG_ARCH" "!$TARGET_ARCH" && exit 0
-  listcontains "$PKG_ARCH" "$TARGET_ARCH" || listcontains "$PKG_ARCH" "any" || exit 0
-fi
-
-if [ ! -f $PKG_DIR/package.mk ]; then
-  printf "$(print_color CLR_ERROR "${PACKAGE_NAME}: no package.mk file found")\n"
-  exit 1
-fi
+mkdir -p $STAMPS_INSTALL/$PACKAGE_NAME
 
 $SCRIPTS/build $@
-
-printf "%${BUILD_INDENT}c $(print_color CLR_INSTALL "INSTALL")    $PACKAGE_NAME $(print_color CLR_TARGET "($TARGET)")\n" ' '>&$SILENT_OUT
-export BUILD_INDENT=$((${BUILD_INDENT:-1}+$BUILD_INDENT_SIZE))
 
 if [ "$TARGET" = target ] ; then
   for p in $PKG_DEPENDS_TARGET; do
@@ -72,91 +52,88 @@ elif [ "$TARGET" = init ] ; then
   INSTALL=$BUILD/initramfs
 fi
 
+build_msg "CLR_INSTALL" "INSTALL" "${PACKAGE_NAME} $(print_color CLR_TARGET "(${TARGET})")" "indent"
+
 mkdir -p $INSTALL
 
 if [ "$TARGET" = target ] ; then
-  if [ -d $PKG_DIR/profile.d ]; then
-    mkdir -p $INSTALL/etc/profile.d
-    cp $PKG_DIR/profile.d/*.conf $INSTALL/etc/profile.d/
-  fi
+  for PKG_TMP_DIR in $PKG_DIR \
+                      $PROJECT_DIR/$PROJECT/packages/$PKG_NAME \
+                      $PROJECT_DIR/$PROJECT/devices/$DEVICE/packages/$PKG_NAME \
+                      ; do
 
-  if [ -d $PKG_DIR/tmpfiles.d ]; then
-    mkdir -p $INSTALL/usr/lib/tmpfiles.d
-    cp $PKG_DIR/tmpfiles.d/*.conf $INSTALL/usr/lib/tmpfiles.d
-  fi
+    [ -d $PKG_TMP_DIR ] || continue
 
-  if [ -d $PKG_DIR/system.d ]; then
-    mkdir -p $INSTALL/usr/lib/systemd/system
-    cp $PKG_DIR/system.d/*.* $INSTALL/usr/lib/systemd/system
-  fi
+    if [ -d $PKG_TMP_DIR/profile.d ]; then
+      mkdir -p $INSTALL/etc/profile.d
+      cp $PKG_TMP_DIR/profile.d/*.conf $INSTALL/etc/profile.d
+    fi
 
-  if [ -d $PKG_DIR/udev.d ]; then
-    mkdir -p $INSTALL/usr/lib/udev/rules.d
-    cp $PKG_DIR/udev.d/*.rules $INSTALL/usr/lib/udev/rules.d
-  fi
+    if [ -d $PKG_TMP_DIR/tmpfiles.d ]; then
+      mkdir -p $INSTALL/usr/lib/tmpfiles.d
+      cp $PKG_TMP_DIR/tmpfiles.d/*.conf $INSTALL/usr/lib/tmpfiles.d
+    fi
 
-  if [ -d $PKG_DIR/sleep.d ]; then
-    mkdir -p $INSTALL/usr/lib/systemd/system-sleep/
-    cp $PKG_DIR/sleep.d/* $INSTALL/usr/lib/systemd/system-sleep/
-  fi
+    if [ -d $PKG_TMP_DIR/system.d ]; then
+      mkdir -p $INSTALL/usr/lib/systemd/system
+      cp $PKG_TMP_DIR/system.d/*.* $INSTALL/usr/lib/systemd/system
+    fi
 
-  if [ -d $PKG_DIR/sleep.d.serial ]; then
-    mkdir -p $INSTALL/usr/lib/systemd/system-sleep.serial
-    cp $PKG_DIR/sleep.d.serial/* $INSTALL/usr/lib/systemd/system-sleep.serial
-  fi
+    if [ -d $PKG_TMP_DIR/udev.d ]; then
+      mkdir -p $INSTALL/usr/lib/udev/rules.d
+      cp $PKG_TMP_DIR/udev.d/*.rules $INSTALL/usr/lib/udev/rules.d
+    fi
 
-  if [ -d $PKG_DIR/sysctl.d ]; then
-    mkdir -p $INSTALL/usr/lib/sysctl.d/
-    cp $PKG_DIR/sysctl.d/*.conf $INSTALL/usr/lib/sysctl.d/
-  fi
+    if [ -d $PKG_TMP_DIR/sleep.d ]; then
+      mkdir -p $INSTALL/usr/lib/systemd/system-sleep
+      cp $PKG_TMP_DIR/sleep.d/* $INSTALL/usr/lib/systemd/system-sleep
+    fi
 
-  if [ -d $PKG_DIR/modules-load.d ]; then
-    mkdir -p $INSTALL/usr/lib/modules-load.d/
-    cp $PKG_DIR/modules-load.d/*.conf $INSTALL/usr/lib/modules-load.d/
-  fi
+    if [ -d $PKG_TMP_DIR/sleep.d.serial ]; then
+      mkdir -p $INSTALL/usr/lib/systemd/system-sleep.serial
+      cp $PKG_TMP_DIR/sleep.d.serial/* $INSTALL/usr/lib/systemd/system-sleep.serial
+    fi
 
-  if [ -d $PKG_DIR/sysconf.d ]; then
-    mkdir -p $INSTALL/etc/sysconf.d
-    cp $PKG_DIR/sysconf.d/*.conf $INSTALL/etc/sysconf.d
-  fi
+    if [ -d $PKG_TMP_DIR/sysctl.d ]; then
+      mkdir -p $INSTALL/usr/lib/sysctl.d
+      cp $PKG_TMP_DIR/sysctl.d/*.conf $INSTALL/usr/lib/sysctl.d
+    fi
 
-  if [ -d $PKG_DIR/debug.d ]; then
-    mkdir -p $INSTALL/usr/share/debugconf
-    cp $PKG_DIR/debug.d/*.conf $INSTALL/usr/share/debugconf
-  fi
+    if [ -d $PKG_TMP_DIR/modules-load.d ]; then
+      mkdir -p $INSTALL/usr/lib/modules-load.d
+      cp $PKG_TMP_DIR/modules-load.d/*.conf $INSTALL/usr/lib/modules-load.d
+    fi
 
-  if [ -d $PKG_DIR/modprobe.d ]; then
-    mkdir -p $INSTALL/usr/lib/modprobe.d
-    cp $PKG_DIR/modprobe.d/*.conf $INSTALL/usr/lib/modprobe.d
-  fi
+    if [ -d $PKG_TMP_DIR/sysconf.d ]; then
+      mkdir -p $INSTALL/etc/sysconf.d
+      cp $PKG_TMP_DIR/sysconf.d/*.conf $INSTALL/etc/sysconf.d
+    fi
+
+    if [ -d $PKG_TMP_DIR/debug.d ]; then
+      mkdir -p $INSTALL/usr/share/debugconf
+      cp $PKG_TMP_DIR/debug.d/*.conf $INSTALL/usr/share/debugconf
+    fi
+
+    if [ -d $PKG_TMP_DIR/modprobe.d ]; then
+      mkdir -p $INSTALL/usr/lib/modprobe.d
+      cp $PKG_TMP_DIR/modprobe.d/*.conf $INSTALL/usr/lib/modprobe.d
+    fi
+  done
 fi
-
-# unset functions
-unset -f pre_install
-unset -f post_install
-
-# include buildfile
-. $PKG_DIR/package.mk
 
 # install
 if [ "$TARGET" = target ] ; then
-  if [ "$(type -t pre_install)" = "function" ]; then
-    pre_install
-  fi
+  pkg_call_optional pre_install
 fi
 
 if [ "$TARGET" = "target" -a -d $PKG_BUILD/.install_pkg ]; then
-  mkdir -p $INSTALL
   cp -PR $PKG_BUILD/.install_pkg/* $INSTALL
 elif [ "$TARGET" = "init" -a -d $PKG_BUILD/.install_init ]; then
-  mkdir -p $INSTALL
   cp -PR $PKG_BUILD/.install_init/* $INSTALL
 fi
 
 if [ "$TARGET" = target ] ; then
-  if [ "$(type -t post_install)" = "function" ]; then
-    post_install
-  fi
+  pkg_call_optional post_install
 fi
 
 touch $STAMP

@@ -1,32 +1,13 @@
-################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2016-present Team LibreELEC
-#
-#  LibreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  LibreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-beetle-wswan"
-PKG_VERSION="bdaeae6"
-PKG_SHA256="302130b437bf152cef54b411ac544d28930b459bef0fac80f2dcb9aa6be4b73f"
-PKG_ARCH="any"
+PKG_VERSION="207404bac2a3193b72ce1946ea07ffd13733d973"
+PKG_SHA256="9749701fd85bb376a6497f6a651c9548f489247a3130a9f3ae6bfc5e9058b352"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/beetle-wswan-libretro"
 PKG_URL="https://github.com/libretro/beetle-wswan-libretro/archive/$PKG_VERSION.tar.gz"
-PKG_SOURCE_DIR="beetle-wswan-libretro-$PKG_VERSION*"
 PKG_DEPENDS_TARGET="toolchain kodi-platform"
-PKG_SECTION="emulation"
-PKG_SHORTDESC="Standalone port of Mednafen WonderSwan to libretro, itself a fork of Cygne"
 PKG_LONGDESC="Standalone port of Mednafen WonderSwan to libretro, itself a fork of Cygne"
 
 PKG_LIBNAME="mednafen_wswan_libretro.so"

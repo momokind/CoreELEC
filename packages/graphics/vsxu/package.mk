@@ -1,20 +1,6 @@
-################################################################################
-#      This file is part of OpenELEC - http://www.openelec.tv
-#      Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
-#
-#  OpenELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  OpenELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
+# Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="vsxu"
 PKG_VERSION="0.5.1"
@@ -25,16 +11,16 @@ PKG_SITE="http://www.vsxu.com"
 # repackaged from https://github.com/vovoid/vsxu/archive/$PKG_VERSION.tar.gz
 PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain $OPENGL libX11 glew glfw zlib libpng libjpeg-turbo freetype"
-PKG_SECTION="multimedia"
-PKG_SHORTDESC="an OpenGL-based programming environment to visualize music and create graphic effects"
 PKG_LONGDESC="an OpenGL-based programming environment to visualize music and create graphic effects"
-
-export LDFLAGS="$LDFLAGS -lX11"
 
 PKG_CMAKE_OPTS_TARGET="-DBUILD_SHARED_LIBS=0 \
                        -DVSXU_STATIC=1 \
                        -DCMAKE_POSITION_INDEPENDENT_CODE=1 \
                        -DCMAKE_CXX_FLAGS=-I$SYSROOT_PREFIX/usr/include/freetype2"
+
+pre_configure_target(){
+  export LDFLAGS="$LDFLAGS -lX11"
+}
 
 post_makeinstall_target() {
   mkdir -p $SYSROOT_PREFIX/usr/lib/vsxu

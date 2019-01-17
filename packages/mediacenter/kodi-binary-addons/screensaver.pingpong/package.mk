@@ -1,29 +1,15 @@
-################################################################################
-#      This file is part of OpenELEC - http://www.openelec.tv
-#      Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
-#
-#  OpenELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  OpenELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
+# Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="screensaver.pingpong"
-PKG_VERSION="a702c1b"
-PKG_SHA256="80eb9b0f1292fa9eebe7dfc8843c859b5c1c05c59704ef1d53c88ba87519a153"
+PKG_VERSION="a307f670db4e6553229c4c8db19d36a2666b3c3c"
+PKG_SHA256="cc629bb2dfd82a3096c6de601d37f614d1258b04db55b75a7413c8ecc40d0112"
 PKG_REV="2"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
-PKG_SITE="https://github.com/notspiff/screensaver.pingpong"
-PKG_URL="https://github.com/notspiff/screensaver.pingpong/archive/$PKG_VERSION.tar.gz"
+PKG_SITE="https://github.com/xbmc/screensaver.pingpong"
+PKG_URL="https://github.com/xbmc/screensaver.pingpong/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain kodi-platform"
 PKG_SECTION=""
 PKG_SHORTDESC="screensaver.pingpong"

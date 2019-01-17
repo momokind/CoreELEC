@@ -1,21 +1,6 @@
-################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2016-present Team LibreELEC
-#      Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
-#
-#  LibreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  LibreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
+# Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="xf86-video-nvidia-legacy"
 PKG_VERSION="340.107"
@@ -26,9 +11,7 @@ PKG_SITE="http://www.nvidia.com/"
 PKG_URL="http://us.download.nvidia.com/XFree86/Linux-x86_64/$PKG_VERSION/NVIDIA-Linux-x86_64-$PKG_VERSION-no-compat32.run"
 PKG_DEPENDS_TARGET="toolchain util-macros linux xorg-server libvdpau"
 PKG_NEED_UNPACK="$LINUX_DEPENDS"
-PKG_SECTION="x11/driver"
-PKG_SHORTDESC="xf86-video-nvidia-legacy: The Xorg driver for NVIDIA video chips supporting Geforce 6 and Geforce 7 devices too"
-PKG_LONGDESC="These binary drivers provide optimized hardware acceleration of OpenGL applications via a direct-rendering X Server. AGP, PCIe, SLI, TV-out and flat panel displays are also supported. This version only supports GeForce 6xxx and higher of the Geforce GPUs plus complimentary Quadros and nforce."
+PKG_LONGDESC="The Xorg driver for NVIDIA video chips supporting Geforce 6 and Geforce 7 devices."
 PKG_TOOLCHAIN="manual"
 
 unpack() {

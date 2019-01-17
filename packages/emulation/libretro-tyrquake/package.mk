@@ -1,32 +1,13 @@
-################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2016-present Team LibreELEC
-#
-#  LibreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  LibreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-tyrquake"
-PKG_VERSION="5aa8c55"
-PKG_SHA256="a78a96ffb53fee8e52b7423a76a9591c49beaa7f9c6dd89027fd4984b1c1cd51"
-PKG_ARCH="any"
+PKG_VERSION="85d8c1b09935feda1084b42187f5b5ddc978485b"
+PKG_SHA256="7e53b258d966ff8f1c6caf404b512fe22c1aa49b9da61d8b141f2958f55ad513"
 PKG_LICENSE="GPLv3"
 PKG_SITE="https://github.com/libretro/tyrquake"
 PKG_URL="https://github.com/libretro/tyrquake/archive/$PKG_VERSION.tar.gz"
-PKG_SOURCE_DIR="tyrquake-$PKG_VERSION*"
 PKG_DEPENDS_TARGET="toolchain kodi-platform"
-PKG_SECTION="emulation"
-PKG_SHORTDESC="game.libretro.tyrquake: tyrquake for Kodi"
 PKG_LONGDESC="game.libretro.tyrquake: tyrquake for Kodi"
 
 PKG_LIBNAME="tyrquake_libretro.so"

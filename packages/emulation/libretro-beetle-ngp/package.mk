@@ -1,32 +1,13 @@
-################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2016-present Team LibreELEC
-#
-#  LibreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  LibreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-beetle-ngp"
-PKG_VERSION="4ea4d9f"
-PKG_SHA256="6d70a5587aec48231695e336948d90a602b4f29bf93381a5058853b2cb5f9ff3"
-PKG_ARCH="any"
+PKG_VERSION="b9fff92d68bed67e44a4d07fb8c43af5d61b0021"
+PKG_SHA256="24d735fe5f7c528cbe88884741367212efb328db33781553eec424b5510db92a"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/beetle-ngp-libretro"
 PKG_URL="https://github.com/libretro/beetle-ngp-libretro/archive/$PKG_VERSION.tar.gz"
-PKG_SOURCE_DIR="beetle-ngp-libretro-$PKG_VERSION*"
 PKG_DEPENDS_TARGET="toolchain kodi-platform"
-PKG_SECTION="emulation"
-PKG_SHORTDESC="Standalone port of Mednafen NGP to the libretro API, itself a fork of Neopop"
 PKG_LONGDESC="Standalone port of Mednafen NGP to the libretro API, itself a fork of Neopop"
 
 PKG_LIBNAME="mednafen_ngp_libretro.so"

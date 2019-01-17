@@ -1,32 +1,13 @@
-################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2016-present Team LibreELEC
-#
-#  LibreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  LibreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-vba-next"
-PKG_VERSION="110ab08"
-PKG_SHA256="bd38e3b23287d654b622e6ddbf3d2829e07e07cb67295ef1be17ed1d9a70b5c0"
-PKG_ARCH="any"
+PKG_VERSION="e40f1d56268416b7d75578b3df2cc6f139a3f097"
+PKG_SHA256="c7c97f6fcbb2a1566cf01efcfb1aa7f8e75dbc73c309179a03a4c71f69596907"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/vba-next"
 PKG_URL="https://github.com/libretro/vba-next/archive/$PKG_VERSION.tar.gz"
-PKG_SOURCE_DIR="vba-next-$PKG_VERSION*"
 PKG_DEPENDS_TARGET="toolchain kodi-platform"
-PKG_SECTION="emulation"
-PKG_SHORTDESC="game.libretro.vba-next: VBA-Next for Kodi"
 PKG_LONGDESC="game.libretro.vba-next: VBA-Next for Kodi"
 
 PKG_LIBNAME="vba_next_libretro.so"

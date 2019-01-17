@@ -37,6 +37,9 @@
 # Default Skin (Estuary)
   SKIN_DEFAULT="Estuary"
 
+# Select whether to use default (upstream xbmc/xbmc) repo, or specific vendor repo
+  KODI_VENDOR="default"
+
 # install extra subtitle Fonts for KODI (yes / no)
   KODI_EXTRA_FONTS="yes"
 
@@ -81,9 +84,6 @@
 
 # build with MySQL support (mysql / mariadb / none)
   KODI_MYSQL_SUPPORT="mariadb"
-
-# build xbmc with sshlib support (yes / no)
-  KODI_SSHLIB_SUPPORT="yes"
 
 # build xbmc with optical drive support (yes / no)
   KODI_OPTICAL_SUPPORT="yes"
@@ -193,10 +193,10 @@
   DISTRO_SRC="http://sources.libreelec.tv/$LIBREELEC_VERSION"
 
 # Addon Server Url
-  ADDON_SERVER_URL="https://github.com/CoreELEC/addons/raw/master"
+  ADDON_SERVER_URL="https://addons.libreelec.tv"
 
 # set the addon dirs
-  ADDON_PATH="$ADDON_VERSION/$PROJECT/$TARGET_ARCH"
+  ADDON_PATH="$ADDON_VERSION/${DEVICE:-$PROJECT}/$TARGET_ARCH"
   ADDON_URL="$ADDON_SERVER_URL/$ADDON_PATH"
 
 # Default size of system partition, in MB, eg. 512
@@ -205,8 +205,9 @@
   SYSTEM_PART_START=8192
 
 # Configure debug groups (space delimited key=value pairs, with each value comma-delimited) and default group when DEBUG=yes
-  DEBUG_GROUPS="kodi=kodi,kodi-platform,p8-platform,!mesa"
-  DEBUG_GROUP_YES="kodi"
+# Use ! or - prefix to prevent a dependent package from being built with debug. Add + suffix to build dependenencies with debug.
+  DEBUG_GROUPS="kodi+=kodi+,kodi-platform+,p8-platform+,!mesa"
+  DEBUG_GROUP_YES="kodi+"
 
 # Default supported get handlers (archive, git, file etc.)
   GET_HANDLER_SUPPORT="archive"
@@ -214,3 +215,13 @@
 # Partition labels for USB/SD installation media
   DISTRO_BOOTLABEL="LIBREELEC"
   DISTRO_DISKLABEL="STORAGE"
+
+# Settings package name - blank if not required
+  DISTRO_PKG_SETTINGS="LibreELEC-settings"
+
+# IR remote protocols supported in default config
+  IR_REMOTE_PROTOCOLS="RC6 NEC"
+
+# IR remote keymaps supported in default config
+  IR_REMOTE_KEYMAPS="rc6_mce xbox_360 xbox_one"
+
