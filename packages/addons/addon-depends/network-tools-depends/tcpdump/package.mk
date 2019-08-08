@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-2.0
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="tcpdump"
@@ -19,7 +19,7 @@ pre_configure_target() {
   LDFLAGS+=" -ltirpc"
 }
 
-pre_build_target() {
+post_configure_target() {
   # discard native system includes
   sed -i "s%-I/usr/include%%g" Makefile
 }

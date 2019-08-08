@@ -1,9 +1,9 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-2.0
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-mame"
-PKG_VERSION="1347e1cf946e8402164acaaea1e12e08de6ca14d"
-PKG_SHA256="c7d43ff48134a77e3ee2229949cf01cebdc190d876896ade0546db24069b392c"
+PKG_VERSION="9c5b7b93e86302a24b39c3bf0bb79e11239e2248"
+PKG_SHA256="389c6626f36f8704792f9eb72db689938c555ef12d4547a143638d1522628828"
 PKG_ARCH="x86_64 arm"
 PKG_LICENSE="GPLv2"
 PKG_SITE="https://github.com/libretro/mame"
@@ -13,7 +13,7 @@ PKG_LONGDESC="game.libretro.mame: MAME for Kodi"
 PKG_BUILD_FLAGS="-gold -lto"
 PKG_TOOLCHAIN="make"
 
-PKG_LIBNAME="mamearcade_libretro.so"
+PKG_LIBNAME="mame_libretro.so"
 PKG_LIBPATH="$PKG_LIBNAME"
 PKG_LIBVAR="MAME_LIB"
 
@@ -31,6 +31,10 @@ make_target() {
        LIBRETRO_OS="unix" ARCH="" PROJECT="" LIBRETRO_CPU="$ARCH" DISTRO="debian-stable" \
        CC="$CC" CXX="$CXX" LD="$LD" CROSS_BUILD="" PTR64="$PTR64" TARGET="mame" \
        SUBTARGET="arcade" PLATFORM="$ARCH" RETRO=1 OSD="retro"
+}
+
+post_make_target() {
+  mv $PKG_BUILD/mamearcade_libretro.so $PKG_BUILD/mame_libretro.so
 }
 
 makeinstall_target() {

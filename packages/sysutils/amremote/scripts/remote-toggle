@@ -1,35 +1,50 @@
 #!/bin/sh
 
-# SPDX-License-Identifier: GPL-3.0-or-later
-# Copyright (C) 2018-present CoreELEC (https://coreelec.org)
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2018-present Team CoreELEC (https://coreelec.org)
 
-if [ -f "/flash/dtb.img" ]; then
-  DTB="/flash/dtb.img"
-elif [ -f "/flash/meson64_odroidc2.dtb" ]; then
-  DTB="/flash/meson64_odroidc2.dtb"
-else
-  exit 1
-fi
+[ ! -e "/proc/device-tree/meson-remote/compatible" ] && exit
+
+for arg in $(cat /proc/cmdline); do
+  case $arg in
+    boot=*)
+      boot="${arg#*=}"
+        case $boot in
+          /dev/system)
+            DTB=/dev/dtb
+            ;;
+          /dev/mmc*|LABEL=*|UUID=*)
+            if [ -f "/flash/dtb.img" ]; then
+              DTB="/flash/dtb.img"
+            else
+              echo "remote-toggle: no device tree found..."
+              exit 1
+            fi
+            ;;
+          *)
+            echo "remote-toggle: unknown boot method..."
+            exit 1
+            ;;
+        esac
+    ;;
+  esac
+done
 
 remount() {
-  if [ -f "$DTB" ]; then
-    mount -o remount,"$1" /flash
-  else
-    exit 1
-  fi
+  [ "$boot" != "/dev/system" ] && mount -o remount,"$1" /flash
 }
 
 disable_meson_remote_ir() {
-  if [ $(/usr/bin/fdtget -t s "$DTB" "/meson-remote/" "status") = "okay" -o $(/usr/bin/fdtget -t s "$DTB" "/meson-ir/" "status") = "okay" ];then
+  if [ $($SYSTEM_ROOT/usr/bin/fdtget -t s "$DTB" "/meson-remote/" "status") = "okay" ] || [ $($SYSTEM_ROOT/usr/bin/fdtget -t s "$DTB" "/meson-ir/" "status") = "okay" ];then
     remount "rw"
-    echo "Disabling meson-remote in dtb"
-    /usr/bin/fdtput -t s "$DTB" "/meson-remote/" "status" "disabled"
-    echo "Disabling meson-ir in dtb"
-    /usr/bin/fdtput -t s "$DTB" "/meson-ir/" "status" "disabled"
+    echo "remote-toggle: disabling meson-remote in device tree..."
+    $SYSTEM_ROOT/usr/bin/fdtput -t s "$DTB" "/meson-remote/" "status" "disabled"
+    echo "remote-toggle: disabling meson-ir in device tree..."
+    $SYSTEM_ROOT/usr/bin/fdtput -t s "$DTB" "/meson-ir/" "status" "disabled"
     remount "ro"
     dtbchanged=1
   else
-    echo "meson-ir and meson-remote already disabled in dtb"
+    echo "remote-toggle: meson-ir and meson-remote disabled in device tree..."
   fi
 }
 
@@ -43,29 +58,27 @@ toggle_meson_remote() {
   else
     exit 1
   fi
-  if [ $(/usr/bin/fdtget -t s "$DTB" "$ENABLE" "status") = "disabled" ]; then
+  if [ $($SYSTEM_ROOT/usr/bin/fdtget -t s "$DTB" "$ENABLE" "status") = "disabled" ]; then
     remount "rw"
-    echo "Disabling $DISABLE in dtb"
-    /usr/bin/fdtput -t s "$DTB" "$DISABLE" "status" "disabled"
-    echo "Enabling $ENABLE in dtb"
-    /usr/bin/fdtput -t s "$DTB" "$ENABLE" "status" "okay"
+    echo "remote-toggle: disabling $DISABLE in device tree..."
+    $SYSTEM_ROOT/usr/bin/fdtput -t s "$DTB" "$DISABLE" "status" "disabled"
+    echo "remote-toggle: enabling $ENABLE in device tree..."
+    $SYSTEM_ROOT/usr/bin/fdtput -t s "$DTB" "$ENABLE" "status" "okay"
     remount "ro"
     dtbchanged=1
   else
-    echo "$ENABLE already enabled in dtb"
+    echo "remote-toggle: $ENABLE enabled in device tree..."
   fi
 }
 
-if [ -f "/flash/remote.disable" ]; then
+if [ -f "/flash/remote.disable" ] || [ -f "/storage/.config/remote.disable" ]; then
   disable_meson_remote_ir
-elif [ -f "/flash/remote.conf" ]; then
+elif [ -f "/flash/remote.conf" ] || [ -f "/storage/.config/remote.conf" ]; then
   toggle_meson_remote "meson-remote"
 else
   toggle_meson_remote "meson-ir"
 fi
 
-if [ ! -z "$dtbchanged" -a "$1" == "reboot" ]; then
-  reboot
-fi
+[ -n "$dtbchanged" ] && [ "$1" = "reboot" ] && reboot
 
 exit 0

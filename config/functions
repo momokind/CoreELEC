@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
+# Copyright (C) 2018-present Team CoreELEC (https://coreelec.org)
 
 ### FUNCTION HELPERS ###
 # die (message, code) abort with optional message and code
@@ -160,6 +161,24 @@ flag_enabled() {
   fi
 }
 
+setup_pkg_config_target() {
+  export PKG_CONFIG="$TOOLCHAIN/bin/pkg-config"
+  export PKG_CONFIG_PATH=""
+  export PKG_CONFIG_LIBDIR="$SYSROOT_PREFIX/usr/lib/pkgconfig:$SYSROOT_PREFIX/usr/share/pkgconfig"
+  export PKG_CONFIG_SYSROOT_DIR="$SYSROOT_PREFIX"
+  export PKG_CONFIG_ALLOW_SYSTEM_CFLAGS=1
+  export PKG_CONFIG_ALLOW_SYSTEM_LIBS=1
+}
+
+setup_pkg_config_host() {
+  export PKG_CONFIG="$TOOLCHAIN/bin/pkg-config"
+  export PKG_CONFIG_PATH=""
+  export PKG_CONFIG_LIBDIR="$TOOLCHAIN/lib/pkgconfig:$TOOLCHAIN/share/pkgconfig"
+  export PKG_CONFIG_SYSROOT_DIR=""
+  unset PKG_CONFIG_ALLOW_SYSTEM_CFLAGS
+  unset PKG_CONFIG_ALLOW_SYSTEM_LIBS
+}
+
 setup_toolchain() {
   if [ "$LTO_SUPPORT" = "yes" ]; then
     if flag_enabled "lto-parallel" "no"; then
@@ -241,12 +260,7 @@ setup_toolchain() {
       export CFLAGS="$TARGET_CFLAGS"
       export CXXFLAGS="$TARGET_CXXFLAGS"
       export LDFLAGS="$TARGET_LDFLAGS"
-      export PKG_CONFIG="$TOOLCHAIN/bin/pkg-config"
-      export PKG_CONFIG_PATH=""
-      export PKG_CONFIG_LIBDIR="$SYSROOT_PREFIX/usr/lib/pkgconfig:$SYSROOT_PREFIX/usr/share/pkgconfig"
-      export PKG_CONFIG_SYSROOT_DIR="$SYSROOT_PREFIX"
-      export PKG_CONFIG_ALLOW_SYSTEM_CFLAGS=1
-      export PKG_CONFIG_ALLOW_SYSTEM_LIBS=1
+      setup_pkg_config_target
       export CMAKE_CONF=$TOOLCHAIN/etc/cmake-$TARGET_NAME.conf
       export CMAKE="cmake -DCMAKE_TOOLCHAIN_FILE=$CMAKE_CONF -DCMAKE_INSTALL_PREFIX=/usr"
       if [ ! -f $CMAKE_CONF ] ; then
@@ -293,12 +307,7 @@ setup_toolchain() {
       export CFLAGS="$HOST_CFLAGS"
       export CXXFLAGS="$HOST_CXXFLAGS"
       export LDFLAGS="$HOST_LDFLAGS"
-      export PKG_CONFIG="$TOOLCHAIN/bin/pkg-config"
-      export PKG_CONFIG_PATH=""
-      export PKG_CONFIG_LIBDIR="$TOOLCHAIN/lib/pkgconfig:$TOOLCHAIN/share/pkgconfig"
-      export PKG_CONFIG_SYSROOT_DIR=""
-      unset PKG_CONFIG_ALLOW_SYSTEM_CFLAGS
-      unset PKG_CONFIG_ALLOW_SYSTEM_LIBS
+      setup_pkg_config_host
       export CMAKE_CONF=$TOOLCHAIN/etc/cmake-$HOST_NAME.conf
       export CMAKE="cmake -DCMAKE_TOOLCHAIN_FILE=$CMAKE_CONF -DCMAKE_INSTALL_PREFIX=$TOOLCHAIN"
       if [ ! -f $CMAKE_CONF ] ; then
@@ -332,7 +341,7 @@ setup_toolchain() {
 }
 
 create_meson_conf() {
-  local endian root
+  local endian root properties
   case "$1" in
     target|init)    endian="little"
                     root="$SYSROOT_PREFIX/usr"
@@ -341,6 +350,8 @@ create_meson_conf() {
                     root="$TOOLCHAIN"
                     ;;
   esac
+
+  properties="PKG_MESON_PROPERTIES_${1^^}"
 
   cat > $2 <<EOF
 [binaries]
@@ -361,6 +372,7 @@ endian = '$endian'
 root = '$root'
 $(python -c "import os; print('c_args = {}'.format([x for x in os.getenv('CFLAGS').split()]))")
 $(python -c "import os; print('c_link_args = {}'.format([x for x in os.getenv('LDFLAGS').split()]))")
+${!properties}
 EOF
 }
 
@@ -478,33 +490,50 @@ debug_strip() {
 
 init_package_cache() {
   local _ANCHOR="@?+?@" DIR
+  local temp_global temp_local
 
   # If the package caches are unset, then populate them
   if [ -z "${_CACHE_PACKAGE_LOCAL}" -o -z "${_CACHE_PACKAGE_GLOBAL}" ]; then
-    _CACHE_PACKAGE_LOCAL="${BUILD}/.cache_package_local"
-    _CACHE_PACKAGE_GLOBAL="${BUILD}/.cache_package_global"
-    mkdir -p "${BUILD}"
-    : > "${_CACHE_PACKAGE_LOCAL}"
-    : > "${_CACHE_PACKAGE_GLOBAL}"
+    temp_global="$(mktemp)"
+    temp_local="$(mktemp)"
 
     # cache project/device folder for a package
     if [ -n $DEVICE ]; then
       for DIR in $(find $ROOT/projects/$PROJECT/devices/$DEVICE/packages -type d 2>/dev/null); do
-        [ -r "$DIR/package.mk" ] && echo "${DIR}${_ANCHOR}" >> "${_CACHE_PACKAGE_LOCAL}"
+        [ -r "$DIR/package.mk" ] && echo "${DIR}${_ANCHOR}" >> "${temp_local}"
       done
     fi
 
     # cache project folder for a package
     for DIR in $(find $ROOT/projects/$PROJECT/packages -type d 2>/dev/null); do
-      [ -r "$DIR/package.mk" ] && echo "${DIR}${_ANCHOR}" >> "${_CACHE_PACKAGE_LOCAL}"
+      [ -r "$DIR/package.mk" ] && echo "${DIR}${_ANCHOR}" >> "${temp_local}"
     done
 
     # cache packages folder
     for DIR in $(find $ROOT/$PACKAGES -type d 2>/dev/null); do
-      [ -r "$DIR/package.mk" ] && echo "${DIR}${_ANCHOR}" >> "${_CACHE_PACKAGE_GLOBAL}"
+      [ -r "$DIR/package.mk" ] && echo "${DIR}${_ANCHOR}" >> "${temp_global}"
     done
 
+    _CACHE_PACKAGE_LOCAL="${BUILD}/.cache_package_local"
+    _CACHE_PACKAGE_GLOBAL="${BUILD}/.cache_package_global"
     export _CACHE_PACKAGE_LOCAL _CACHE_PACKAGE_GLOBAL
+
+    # overwrite existing cache files only when they are invalid, or not yet created
+    mkdir -p "$(dirname "${_CACHE_PACKAGE_GLOBAL}")"
+    if [ -f "${_CACHE_PACKAGE_LOCAL}" ] && cmp -s "${temp_local}" "${_CACHE_PACKAGE_LOCAL}"; then
+      rm "${temp_local}"
+    else
+      mv "${temp_local}" "${_CACHE_PACKAGE_LOCAL}"
+    fi
+    if [ -f "${_CACHE_PACKAGE_GLOBAL}" ] && cmp -s "${temp_global}" "${_CACHE_PACKAGE_GLOBAL}"; then
+      rm "${temp_global}"
+    else
+      mv "${temp_global}" "${_CACHE_PACKAGE_GLOBAL}"
+    fi
+  fi
+
+  if [ -z "${_DEBUG_DEPENDS_LIST+x}" ]; then
+    set_debug_depends
   fi
 }
 
@@ -792,22 +821,18 @@ find_dir_path() {
   find_path -d "$1" "$2"
 }
 
-# p1: name of potential function to execute if it exists
-# return 0 if function executed, 1 if not, die if error
+# p1: name of function to test for
+# return 0 if function exists, 1 if not
+pkg_call_exists() {
+  [ "$(type -t ${1})" = "function" ] && return 0 || return 1
+}
+
+# p1: name of function to execute unconditionally
+# testing the exit code value of this function is likely to break set -e fail-on-error behaviour
 pkg_call() {
   [ -n "${PKG_NAME}" ] || die "$(print_color CLR_ERROR "FAILURE: Cannot call ${1} package function when package is not known!")"
 
-  if [ "$(type -t ${1})" = "function" ]; then
-    ${1} || die "$(print_color CLR_ERROR "FAILURE: ${1} for package ${PKG_NAME} did not succeed!")"
-  else
-    return 1
-  fi
-}
-
-# p1: name of potential function to execute if it exists
-# return 0 if function executed or not, or die if error
-pkg_call_optional() {
-  pkg_call ${1} || return 0
+  ${1}
 }
 
 unset_functions() {
@@ -910,7 +935,11 @@ source_package() {
   # Late variable binding - allow the package to now evaluate any variables
   # that we may have initialised after sourcing the package, typically
   # PKG_BUILD etc.
-  [ -n "${PKG_NAME}" ] && pkg_call_optional configure_package || true
+  if [ -n "${PKG_NAME}" ]; then
+    if pkg_call_exists configure_package; then
+      pkg_call configure_package
+    fi
+  fi
 }
 
 
@@ -947,15 +976,19 @@ kernel_config_path() {
 }
 
 kernel_make() {
-  LDFLAGS="" make CROSS_COMPILE=$TARGET_KERNEL_PREFIX \
-    ARCH="$TARGET_KERNEL_ARCH" \
-    HOSTCC="$TOOLCHAIN/bin/host-gcc" \
-    HOSTCXX="$TOOLCHAIN/bin/host-g++" \
-    HOSTCFLAGS="$HOST_CFLAGS" \
-    HOSTLDFLAGS="$HOST_LDFLAGS" \
-    HOSTCXXFLAGS="$HOST_CXXFLAGS" \
-    DEPMOD="$TOOLCHAIN/bin/depmod" \
-    "$@"
+  (
+    setup_pkg_config_host
+
+    LDFLAGS="" make CROSS_COMPILE=$TARGET_KERNEL_PREFIX \
+      ARCH="$TARGET_KERNEL_ARCH" \
+      HOSTCC="$TOOLCHAIN/bin/host-gcc" \
+      HOSTCXX="$TOOLCHAIN/bin/host-g++" \
+      HOSTCFLAGS="$HOST_CFLAGS" \
+      HOSTLDFLAGS="$HOST_LDFLAGS" \
+      HOSTCXXFLAGS="$HOST_CXXFLAGS" \
+      DEPMOD="$TOOLCHAIN/bin/depmod" \
+      "$@"
+  )
 }
 
 # get kernel module dir

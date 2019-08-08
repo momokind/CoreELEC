@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-2.0
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="game.libretro.pcsx-rearmed"
-PKG_VERSION="844d4b17767b195ec224ae6b1ee3e0ac7e4a12a7"
-PKG_SHA256="332574b8fb188321a67853834b5404fbeb0c527c0cb9d8ce457c3a4c6d46aa2f"
-PKG_REV="113"
+PKG_VERSION="22.0.0.4-Leia"
+PKG_SHA256="c215dc5f1b9d498a649d2c037c52594d35051bb4d43b0ec433dcd9de67f25d69"
+PKG_REV="116"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/kodi-game/game.libretro.pcsx-rearmed"

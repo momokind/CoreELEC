@@ -2,6 +2,7 @@
 
 # SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (C) 2014 Stephan Raue (stephan@openelec.tv)
+# Copyright (C) 2018-present Team CoreELEC (https://coreelec.org)
 
 SOURCEREMOTECONF=""
 REMAP="no"
@@ -11,22 +12,6 @@ if [ -f /storage/.config/remote.conf ]; then
   REMAP="yes"
 elif [ -f /flash/remote.conf ]; then
   SOURCEREMOTECONF="/flash"
-  REMAP="yes"
-elif [ -f /etc/amremote/remote.conf ]; then
-  SOURCEREMOTECONF="/etc/amremote"
-elif ! grep -q /dev/system /proc/mounts ; then
-  mount -o rw,remount /flash
-  mkdir -p /tmp/system
-  mount -o ro /dev/system /tmp/system
-  for f in /tmp/system/etc/remote*.conf; do
-    cp $f /flash
-    SOURCEREMOTECONF="/flash"
-  done
-  for f in /tmp/system/remote*.conf; do
-    cp $f /flash
-    SOURCEREMOTECONF="/flash"
-  done
-  umount /tmp/system
   REMAP="yes"
 fi
 
@@ -38,6 +23,8 @@ if [ -n "$SOURCEREMOTECONF" ]; then
             s/ 97[^0-9]*$/ 28/
             s/ 102[^0-9]*$/ 172/
             s/ 125[^0-9]*$/ 46/
+            s/ 128[^0-9]*$/ 45/
+            s/ 139[^0-9]*$/ 46/
             s/ 142[^0-9]*$/ 116/
             s/ 143[^0-9]*$/ 116/
             s/ 158[^0-9]*$/ 1/

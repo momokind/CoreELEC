@@ -1,11 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
-# Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
-# Copyright (C) 2018-present CoreELEC (https://coreelec.org)
+# Copyright (C) 2018-present Team CoreELEC (https://coreelec.org)
 
 PKG_NAME="CoreELEC-settings"
-PKG_VERSION="59e902304f7817d914add1e763d7b740ba261897"
-PKG_SHA256="9b40d2dd33c97049ad14565fdc362b64cb3624f5c9f5bec2435db6e09876fbf9"
+PKG_VERSION="5f7b66d01ad5e63b23dcc77f981f4c6ee09d85ad"
+PKG_SHA256="6190efa2433360426da7e1b8bc32069a8aa07f84a5fef91aeefde490c9955bbb"
 PKG_LICENSE="GPL"
 PKG_SITE="https://coreelec.org"
 PKG_URL="https://github.com/CoreELEC/service.coreelec.settings/archive/$PKG_VERSION.tar.gz"

@@ -2,6 +2,7 @@
 
 # SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (C) 2009-2016 Lukas Rusak (lrusak@libreelec.tv)
+# Copyright (C) 2018-present Team CoreELEC (https://coreelec.org)
 
 . config/options
 
@@ -192,12 +193,6 @@ if [ "$1" = "-b" -o "$1" = "-ru" ]; then
     elif [ "$3" == "RPi2" ]; then
       project="RPi"
       device="RPi2"
-    elif [ "$3" == "S905" ]; then
-      project="Amlogic"
-      device="S905"
-    elif [ "$3" == "S912" ]; then
-      project="Amlogic"
-      device="S912"
     fi
   fi
 fi

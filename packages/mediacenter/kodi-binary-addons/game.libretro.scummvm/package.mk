@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-2.0
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="game.libretro.scummvm"
-PKG_VERSION="e7fcffaef18ee259143d36fef60e0e3caafaac2a"
-PKG_SHA256="5c633fadd2022ba47c84e2e12165bfc116753e945950ba90014316c0a8c4e804"
-PKG_REV="112"
+PKG_VERSION="2.0.0.4-Leia"
+PKG_SHA256="af667d068dfd728eb1a9e58900b8743240b5480a02e1077d626db867cf5171ac"
+PKG_REV="116"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/kodi-game/game.libretro.scummvm"

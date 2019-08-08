@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-2.0
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 #
 # exit 1 = unsupported GPU
@@ -178,6 +178,9 @@ intel_amd() {
 
   # make a backup of $file
   cp "$file" "$file".old
+  
+  #check kernel version
+  check_kernel
 
   # add boot parameters to $file in relation to the used kernel
   if [ "$kernel" -lt "415000" ]; then
